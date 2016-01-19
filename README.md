@@ -22,9 +22,14 @@ Edit the `config.js` file with the data relevant to your setup, example below.
         schema: [{                            // Array of Firebase datasets to index in Algolia
             path: 'app/todo',                 // Firebase path
             name: 'prod_todo_lists',          // Algolia name (must exist already)
-            key: 'id',                        // Optional, name of ID field (otherwise, the object key will be used)
-            lastModTime: 'modifiedAt'         // Optional, this field will be checked against last run date to see if reindexing is necessary. WARNING: Without this field being corectly configured, everything is re-indexed at rerun
-            include: [                        // Optional, list of fields to index (otherwise, every field will be indexed)
+            key: 'id',                        // Optional, name of ID field (otherwise, the object 
+                                              // key will be used)
+            lastModTime: 'modifiedAt'         // Optional, this field will be checked against last 
+                                              // run date to see if reindexing is necessary. 
+                                              // WARNING: Without this field being corectly configured,
+                                              // everything is re-indexed at rerun
+            include: [                        // Optional, list of fields to index 
+                                              // (otherwise, every field will be indexed)
                 'name',
                 'created',
                 'modified',
