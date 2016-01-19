@@ -1,0 +1,5 @@
+**/vendor/*.js
+**/__tests__/*.js
+**/build/**
+**/dist/**
+**/node_modules/**
