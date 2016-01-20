@@ -1,13 +1,19 @@
+import Firebase from 'firebase';
+import algoliasearch from 'algoliasearch';
 
+import CONFIG from './config';
+// import clearAlgoliaIndex from './util';
 
-let env = process.env.NODE_ENV;
+const { applicationId, apiKey } = CONFIG.algolia;
+const algo = algoliasearch(applicationId, apiKey);
 
-let config = env === 'production' ? {
-    // Prod confi§g
-    toto: 'Serious toto'
-} : {
-    // Dev config
-    toto: 'Well, toto'
-};
+const fb = new Firebase(CONFIG.firebase.instance + '.firebaseio.com/');
 
-console.log(config.toto);
+CONFIG.schema.forEach(dataset => {
+    console.log('Dataset found in config', dataset.path, dataset.name);
+    //
+});
+
+// let index = client.initIndex('contacts');
+// client.destroy();
+process.exit(0);

@@ -1,9 +1,10 @@
 {
   "name": "algolia-firebase-indexer",
   "version": "0.1.0",
-  "description": "Nodejs daemons that keep Algolia search indexes up to date against firebase dataset",
+  "description": "Nodejs daemon that keeps Algolia search indexes up to date against Firebase datasets",
   "main": "main.js",
   "scripts": {
+    "run": "node ./bootstrap.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -11,6 +12,7 @@
     "url": "git+https://github.com/webstylestory/algolia-firebase-indexer.git"
   },
   "keywords": [
+    "node",
     "nodejs",
     "firebase",
     "algolia",
@@ -28,7 +30,8 @@
     "babel-preset-es2015": "^6.3.13",
     "babel-register": "^6.3.13",
     "es6-module-loader": "^0.17.10",
-    "firebase": "^2.3.2"
+    "firebase": "^2.3.2",
+    "lodash": "^4.0.0"
   },
   "devDependencies": {}
 }
