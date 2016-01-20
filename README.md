@@ -2,7 +2,7 @@
 
 Nodejs daemon that keeps Algolia search indexes up to date against a Firebase dataset
 
-Inspired by Scott Smith's work in this [http://scottksmith.com/blog/2014/12/09/algolia-real-time-search-with-firebase/](blog post)
+Inspired by Scott Smith's work in this [blog post](http://scottksmith.com/blog/2014/12/09/algolia-real-time-search-with-firebase/)
 
 
 ---
@@ -14,7 +14,7 @@ Inspired by Scott Smith's work in this [http://scottksmith.com/blog/2014/12/09/a
 (it runs `node ./bootstrap.js`)
 
 For production setup, I strongly encourage the use of a good process manager 
-like [http://github.com](PMII)
+like [PMII](http://github.com)
 
 The server needs a config file before it can runs, at least to provide your Algolia and Firebase API keys. See the section below about configuration.
 
