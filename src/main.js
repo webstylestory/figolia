@@ -1,10 +1,13 @@
-import init from './init';
+import prettyjson from 'prettyjson';
+
+import initServices from './init-services';
 import fullReindex from './full-reindex';
 
-// Main server
-const main = (CONFIG) => {
 
-    const { fb, algolia } = init(CONFIG);
+// Main server
+function main(CONFIG) {
+
+    const { fb, algolia } = initServices(CONFIG);
 
     const envName = process.env.NODE_ENV === 'production' ? 'PRODUCTION' : 'DEVELOPMENT';
     info(`Starting server in ${envName} environment.`);
@@ -29,6 +32,6 @@ const main = (CONFIG) => {
         fullReindex({ CONFIG, dataset, fb, algolia });
 
     }
-};
+}
 
 export default main;
