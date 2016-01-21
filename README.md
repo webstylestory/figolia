@@ -12,9 +12,15 @@ IMPORTANT: This is an early release, check the issues for the remaining tasks be
 
 ---
 
+## Install
+
+    npm install
+
+---
+
 ## Usage
 
-    node ./bootstrap.js
+    node ./server.js
 
 For production setup, I strongly encourage the use of a good process manager 
 like [PM2](https://github.com/Unitech/pm2)
@@ -85,7 +91,7 @@ Edit the `config.example.js` file with the data relevant to your setup, and rena
 In order for `algolia-firebase-indexer` to work properly, it has to store some backend 
 information in firebase. You can specify their storage path in the config - see above.
 
-What is it stored, for eaxh index ? 
+What is it stored, for each index ? 
 
   * Number if items indexed
   * Last known indexing date 
@@ -99,8 +105,9 @@ For more serious usage, this is not reccomended, as it can lead to many useless 
 The suggested usage is to specify `dataPath` and `uid` in `firebase` config, and give
 write access to that uid in the Firebase Rules (see Firebase docs). Also mandatory, the last modificated time of each items must be set in the schema definition.
 
-Simplest rules to define in Firebase for the backend data path (with default values) :
+Don't forget to allow `algolia` user to write in your Firebase `algolia` path:
 
+    // Let algolia-firebase-indexer daemon keep track of what is in sync
     "algolia": {                              
         ".read": "auth.uid == 'algolia'",
         ".write": "auth.uid == 'algolia'",
@@ -112,17 +119,23 @@ Simplest rules to define in Firebase for the backend data path (with default val
 
 If you need more verbose information in the console, you can use the following command line:
 
-    DEBUG=*,-babel,-firebase,-algolia node bootstrap.js
+    DEBUG=*,-babel,-firebase,-algolia node server.js
 
 This will enable all the main app debug output, without the insanely verbose debug info from babel, algolia and firebase.
 
 This is equivalent to enabling all debug items in the app, *i.e.* :
 
-    DEBUG=main node bootstrap.js
+    DEBUG=main node server.js
 
 To shutdown all console output (quiet mode), you can use the following :
 
-    DEBUG=quiet node bootstrap.js
+    DEBUG=quiet node server.js
+
+---
+
+## License
+
+MIT © 2016 Aurélien Chivot
 
 ---
 
