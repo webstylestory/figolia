@@ -8,7 +8,7 @@
 //   * You Algolia and Firebase keys
 //   * The schema/indexes you want to sync
 //
-import { _defaultsDeep } from 'lodash';
+import { defaultsDeep as _defaultsDeep } from 'lodash';
 
 let CONFIG = {
     // Firebase credentials
@@ -26,6 +26,11 @@ let CONFIG = {
         // *Admin* API Key
         apiKey: 'TO_BE_CHANGED'
     },
+    // Optional, this field will be checked against last
+    // run date to see if reindexing is necessary.
+    // WARNING: Without this field being correctly configured,
+    // everything is re-indexed at rerun.
+    lastModTime: 'modifiedAt',
     // Firebase datasets to index in Algolia
     schema: {
         todoLists: {
@@ -33,20 +38,9 @@ let CONFIG = {
             path: 'app/todo',
             // Algolia index (must exist already)
             index: 'dev_todo_lists',
-            // Backup index before clearing them
-            // (when there is no stats or mode time)
-            // leave empty or false to discard backup
-            backup: './backups',
             // Optional, name of ID field (otherwise,
             // the Firebase object key will be used)
             key: 'id',
-            // Optional, this field will be checked against last
-            // run date to see if reindexing is necessary.
-            // WARNING: Without this field being corectly configured,
-            // everything is re-indexed at rerun.
-            lastModTime: 'modifiedAt',
-            // Folder where any cleared index backup data will be stored
-            backup: './backup',
             // Optional, list of fields to index
             // (otherwise, every field will be indexed)
             include: [
@@ -71,8 +65,8 @@ let CONFIG = {
 // Uncomment this for production setup. This will be merged into CONFIG object.
 //
 
-// if (process.env === 'production') {
-//     CONFIG = _defaultsDeep({}, CONFIG, {
+// if (process.env.NODE_ENV === 'production') {
+//     CONFIG = _defaultsDeep({}, {
 //         // Production firebase credentials
 //         firebase: {
 //             instance: 'TO_BE_CHANGED',
@@ -87,7 +81,7 @@ let CONFIG = {
 //                 idnex: 'prod_todo_items',
 //             }
 //         }
-//     });
+//     }, CONFIG);
 // }
 
 export default CONFIG;

@@ -43,7 +43,6 @@
         "space-after-keywords": [1, "always"],
         "space-before-blocks": [1, "always"],
         "object-curly-spacing": [1, "always"],
-        "computed-property-spacing": [1, "always"],
         "spaced-comment": [1, "always"],
         "new-cap": 0
     },

@@ -4,17 +4,20 @@ Nodejs daemon that keeps Algolia search indexes up to date against a Firebase da
 
 Inspired by Scott Smith's work in this [blog post](http://scottksmith.com/blog/2014/12/09/algolia-real-time-search-with-firebase/)
 
+---
+
+## WORK IN PROGRESS
+
+IMPORTANT: This is an early release, check the issues for the remaining tasks before it can be use seriously
 
 ---
 
 ## Usage
 
-    npm run
-
-(it runs `node ./bootstrap.js`)
+    node ./bootstrap.js
 
 For production setup, I strongly encourage the use of a good process manager 
-like [PMII](http://github.com)
+like [PM2](https://github.com/Unitech/pm2)
 
 The server needs a config file before it can runs, at least to provide your Algolia and Firebase API keys. See the section below about configuration.
 
@@ -41,6 +44,11 @@ Edit the `config.example.js` file with the data relevant to your setup, and rena
             // *Admin* API Key
             apiKey: 'TO_BE_CHANGED'
         },
+        // Optional, this field will be checked against last
+        // run date to see if reindexing is necessary.
+        // WARNING: Without this field being corectly configured,
+        // everything is re-indexed at rerun.
+        lastModTime: 'modifiedAt',
         // Firebase datasets to index in Algolia
         schema: {
             todoLists: {
@@ -48,20 +56,9 @@ Edit the `config.example.js` file with the data relevant to your setup, and rena
                 path: 'app/todo',
                 // Algolia index (must exist already)
                 index: 'dev_todo_lists',
-                // Backup index before clearing them
-                // (when there is no stats or mode time)
-                // leave empty or false to discard backup
-                backup: './backups',
                 // Optional, name of ID field (otherwise,
                 // the Firebase object key will be used)
                 key: 'id',
-                // Optional, this field will be checked against last
-                // run date to see if reindexing is necessary.
-                // WARNING: Without this field being corectly configured,
-                // everything is re-indexed at rerun.
-                lastModTime: 'modifiedAt',
-                // Folder where any cleared index backup data will be stored
-                backup: './backup',
                 // Optional, list of fields to index
                 // (otherwise, every field will be indexed)
                 include: [
@@ -75,9 +72,7 @@ Edit the `config.example.js` file with the data relevant to your setup, and rena
                 // Second example dataset to index
                 path: 'app/todoItems',
                 index: 'dev_todo_items',
-                key: 'id',
-                lastModTime: 'modifiedAt',
-                backup: './backup'
+                key: 'itemId'
             }
         }
     };
@@ -97,8 +92,7 @@ What is it stored, for eaxh index ?
 
 ### Reindexing, incremental indexing
 
-This daemon supports a simple mode where every indexed object in Algolia is dropped at runtime, and then re-indexed from the current Firebase connection. Any previously indexed value will be saved in the configured
-backup folder (see config above)
+This daemon supports a simple mode where every indexed object in Algolia is dropped at runtime, and then re-indexed from the current Firebase connection. **Any previously indexed data will be lost.**
 
 For more serious usage, this is not reccomended, as it can lead to many useless operations, and bandwith waste.
 
@@ -111,6 +105,24 @@ Simplest rules to define in Firebase for the backend data path (with default val
         ".read": "auth.uid == 'algolia'",
         ".write": "auth.uid == 'algolia'",
     }
+
+---
+
+## Logging & debugging
+
+If you need more verbose information in the console, you can use the following command line:
+
+    DEBUG=*,-babel,-firebase,-algolia node bootstrap.js
+
+This will enable all the main app debug output, without the insanely verbose debug info from babel, algolia and firebase.
+
+This is equivalent to enabling all debug items in the app, *i.e.* :
+
+    DEBUG=main node bootstrap.js
+
+To shutdown all console output (quiet mode), you can use the following :
+
+    DEBUG=quiet node bootstrap.js
 
 ---
 
