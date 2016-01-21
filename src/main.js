@@ -1,8 +1,11 @@
 import prettyjson from 'prettyjson';
 
+import Debug from './debug';
 import initServices from './init-services';
 import fullReindex from './full-reindex';
 
+const info = Debug('info:main');
+const debug = Debug('main');
 
 // Main server
 function main(CONFIG) {
