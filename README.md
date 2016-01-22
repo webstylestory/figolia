@@ -1,3 +1,8 @@
+[![Build Status](https://travis-ci.org/webstylestory/algolia-firebase-indexer.svg?branch=master)](https://travis-ci.org/webstylestory/algolia-firebase-indexer)
+
+[![Coverage Status](https://coveralls.io/repos/github/webstylestory/algolia-firebase-indexer/badge.svg?branch=master)](https://coveralls.io/github/webstylestory/algolia-firebase-indexer?branch=master)
+
+
 # algolia-firebase-indexer
 
 Nodejs daemon that keeps Algolia search indexes up to date against a Firebase dataset
