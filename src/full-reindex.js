@@ -2,7 +2,6 @@ import Debug from 'debug';
 
 const info = Debug('info:full-reindex');
 const debug = Debug('full-reindex');
-const fbDebug = Debug('firebase');
 
 //
 //  `fullReindex` takes a dataset configuration object in parameters and
@@ -83,7 +82,7 @@ const fullReindex = ({ CONFIG, dataset, fb, algolia }) => {
                 console.trace(); // TODO: add multi-callback trace here
             });
 
-    }, fbDebug);
+    }, info);
 
     return deferred.promise;
 };
