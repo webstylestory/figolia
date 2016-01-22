@@ -2,7 +2,6 @@ import Firebase from 'firebase';
 import algoliasearch from 'algoliasearch';
 import Debug from './debug';
 
-const debug = Debug('init');
 const info = Debug('info:init');
 
 function initServices(CONFIG) {
@@ -11,11 +10,11 @@ function initServices(CONFIG) {
     //
     Firebase.enableLogging(Debug.enabled('firebase'), Debug('firebase'));
 
-    const fbInstance = `${CONFIG.firebase.instance}.firebaseio.com`;
+    const fbInstance = `https://${CONFIG.firebase.instance}.firebaseio.com`;
     const fb = new Firebase(fbInstance);
 
     if (!fb) {
-        debug(`Could not connect to Firebase instance ${fbInstance}`);
+        throw new Error(`Could not connect to Firebase instance ${fbInstance}`);
         process.exit(1);
     }
 
@@ -29,7 +28,7 @@ function initServices(CONFIG) {
     const algolia = algoliasearch(applicationId, apiKey);
 
     if (!algolia) {
-        debug('Cannot connect to Algolia');
+        throw new Error('Cannot connect to Algolia');
         process.exit(1);
     }
 
