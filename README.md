@@ -119,13 +119,13 @@ Don't forget to allow `algolia` user to write in your Firebase `algolia` path:
 
 If you need more verbose information in the console, you can use the following command line:
 
-    DEBUG=*,-babel,-firebase,-algolia node server.js
+    DEBUG=*,-babel*,-firebase*,-algolia* node server.js
 
 This will enable all the main app debug output, without the insanely verbose debug info from babel, algolia and firebase.
 
 This is equivalent to enabling all debug items in the app, *i.e.* :
 
-    DEBUG=main node server.js
+    DEBUG=main*,init* node server.js
 
 To shutdown all console output (quiet mode), you can use the following :
 
