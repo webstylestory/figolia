@@ -2,7 +2,7 @@
   "name": "algolia-firebase-indexer",
   "version": "0.1.0",
   "description": "Nodejs daemon that keeps Algolia search indexes up to date against Firebase datasets",
-  "main": "main.js",
+  "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "test": "babel-node node_modules/.bin/babel-istanbul cover _mocha"
