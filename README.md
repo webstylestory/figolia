@@ -7,6 +7,17 @@ Nodejs daemon that keeps Algolia search indexes up to date against a Firebase da
 
 Inspired by Scott Smith's work in this [blog post](http://scottksmith.com/blog/2014/12/09/algolia-real-time-search-with-firebase/)
 
+  * [Usage](#usage)
+  * [Configuration](#configuration)
+      * [Firebase configuration](#firebase-configuration)
+      * [Reindexing, incremental indexing](#reindexing-incremental-indexing)
+  * [Developers](#developers)
+      * [Logging & Debugging](#logging-debugging)
+      * [testing](#testing)
+      * [contribute](#contribute)
+  * [License](#license)
+
+
 ---
 
 ## WORK IN PROGRESS
@@ -120,7 +131,7 @@ Don't forget to allow `algolia` user to write in your Firebase `algolia` path:
 
 ## Developers
 
-# Logging & debugging
+### Logging & debugging
 
 If you need more verbose information in the console, you can use the following command line:
 
@@ -136,13 +147,17 @@ To shutdown all console output (quiet mode), you can use the following :
 
     DEBUG=quiet node server.js
 
-# Testing
+### Testing
 
-    FIREBASE_INSTANCE=CHANGE_ME FIREBASE_SECRET=CHANGE_ME ALGOLIA_APP_ID=CHANGE_ME ALGOLIA_API_KEY=CHANGE_ME DEBUG=quiet npm test
+Because Firebase and Algolia accounts are needed for this app, you have to provide
+all the necessary credentials as environment variables while running `npm test`:
+
+    FIREBASE_INSTANCE=CHANGE_ME FIREBASE_SECRET=CHANGE_ME ALGOLIA_APP_ID=CHANGE_ME \
+    ALGOLIA_API_KEY=CHANGE_ME DEBUG=quiet npm test
 
 (This should not need any global dependencies, but let me know if it does)
 
-# Contribute
+### Contribute
 
 PRs are more than welcome! Your PR should not break current usage
 and pass all tests. Even better if you write the tests for the added code, and 
