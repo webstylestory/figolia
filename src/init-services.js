@@ -9,14 +9,8 @@ function initServices(CONFIG) {
     // Connect to Firebase
     //
     Firebase.enableLogging(Debug.enabled('firebase'), Debug('firebase'));
-
     const fbInstance = `https://${CONFIG.firebase.instance}.firebaseio.com`;
     const fb = new Firebase(fbInstance);
-
-    if (!fb) {
-        throw new Error(`Could not connect to Firebase instance ${fbInstance}`);
-        process.exit(1);
-    }
 
     info(`Connected to Firebase instance ${fbInstance}`);
 
@@ -24,15 +18,9 @@ function initServices(CONFIG) {
     // Connect to algolia
     //
     const { applicationId, apiKey } = CONFIG.algolia;
-
     const algolia = algoliasearch(applicationId, apiKey);
 
-    if (!algolia) {
-        throw new Error('Cannot connect to Algolia');
-        process.exit(1);
-    }
-
-    info(`Connected to Algolia`);
+    info(`Connected to Algolia appId ${applicationId}`);
 
     return { fb, algolia };
 }

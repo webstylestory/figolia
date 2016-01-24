@@ -5,7 +5,6 @@ import initServices from '../src/init-services';
 // Usage : expectCalling(myFunc).withArgs('badArg').to.throw(/gtfo/)
 let expectCalling = func => ({ withArgs: (...args) => expect(() => func(...args)) });
 
-
 const badConfig = {
     firebase: {
         instance: '',
@@ -56,13 +55,13 @@ describe('Third party services initialization (THIS TEST NEEDS ENVIRONMENT VARIA
 
         it('should throw if Firebase values are missing from config', done => {
             config.firebase = badConfig.firebase;
-            expectCalling(initServices).withArgs(config).to.throw(/Firebase/);
+            expectCalling(initServices).withArgs(config).to.throw(/firebase/);
             done();
         });
 
         it('should throw if Algolia values are missing from config', done => {
             config.algolia = badConfig.algolia;
-            expectCalling(initServices).withArgs(config).to.throw(/Algolia/);
+            expectCalling(initServices).withArgs(config).to.throw(/algolia/);
             done();
         });
 
