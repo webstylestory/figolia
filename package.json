@@ -4,6 +4,7 @@
   "description": "Nodejs daemon that keeps Algolia search indexes up to date against Firebase datasets",
   "main": "main.js",
   "scripts": {
+    "start": "node server.js",
     "test": "babel-node node_modules/.bin/babel-istanbul cover _mocha"
   },
   "repository": {
