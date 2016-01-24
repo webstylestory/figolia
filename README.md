@@ -1,6 +1,14 @@
-[![Build Status](https://travis-ci.org/webstylestory/algolia-firebase-indexer.svg?branch=master)](https://travis-ci.org/webstylestory/algolia-firebase-indexer)
+[![Build Status](https://img.shields.io/travis/webstylestory/algolia-firebase-indexer.svg?style=flat-square)](https://travis-ci.org/webstylestory/algolia-firebase-indexer)
 
-[![Coverage Status](https://coveralls.io/repos/github/webstylestory/algolia-firebase-indexer/badge.svg?branch=master)](https://coveralls.io/github/webstylestory/algolia-firebase-indexer?branch=master)
+[![Coverage Status](https://img.shields.io/coveralls/webstylestory/algolia-firebase-indexer.svg?style=flat-square)](https://coveralls.io/github/webstylestory/algolia-firebase-indexer)
+
+[![Dependency Status](https://img.shields.io/david/webstylestory/algolia-firebase-indexer.svg?style=flat-square)](https://david-dm.org/webstylestory/algolia-firebase-indexer)
+
+[![devDependency Status](https://img.shields.io/david/dev/webstylestory/algolia-firebase-indexer.svg?style=flat-square)](https://david-dm.org/webstylestory/algolia-firebase-indexer#info=devDependencies)
+
+![Babel stage-2 badge](https://img.shields.io/badge/babel-stage%202-blue.svg)
+
+![Made by french tech badge](https://img.shields.io/badge/made%20by-french%20%E2%9D%A4%20tech-orange.svg?style=flat-square)
 
 
 # algolia-firebase-indexer
@@ -120,7 +128,9 @@ Don't forget to allow `algolia` user to write in your Firebase `algolia` path:
 
 ---
 
-## Logging & debugging
+## Developers
+
+# Logging & debugging
 
 If you need more verbose information in the console, you can use the following command line:
 
@@ -136,15 +146,27 @@ To shutdown all console output (quiet mode), you can use the following :
 
     DEBUG=quiet node server.js
 
+# Testing
+
+    npm test
+
+(This should not need any global dependencies, but let me know if it does)
+
+# Contribute
+
+PRs are more than welcome! Your PR should not break current usage
+and pass all tests. Even better if you write the tests for the added code, and 
+even better if the new features are documented in this README ;-) 
+But I will have a look at anything you will have the time to bring together.
+
 ---
 
 ## License
 
 MIT © 2016 Aurélien Chivot
 
----
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
-## Contribute
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-PRs are welcome, just follow common sense, and for the style, please comply
-to the rules in `.editorconfig` and `.eslintrc`.
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
