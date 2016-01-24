@@ -1,4 +1,4 @@
-[![Build Status](https://img.shields.io/travis/webstylestory/algolia-firebase-indexer.svg?style=flat-square)](https://travis-ci.org/webstylestory/algolia-firebase-indexer) [![Coverage Status](https://img.shields.io/coveralls/webstylestory/algolia-firebase-indexer.svg?style=flat-square)](https://coveralls.io/github/webstylestory/algolia-firebase-indexer) [![Dependency Status](https://img.shields.io/david/webstylestory/algolia-firebase-indexer.svg?style=flat-square)](https://david-dm.org/webstylestory/algolia-firebase-indexer) [![devDependency Status](https://img.shields.io/david/dev/webstylestory/algolia-firebase-indexer.svg?style=flat-square)](https://david-dm.org/webstylestory/algolia-firebase-indexer#info=devDependencies) ![Babel stage-2 badge](https://img.shields.io/badge/babel-stage%202-blue.svg?style=flat-square) ![Made by french tech badge](https://img.shields.io/badge/made%20by-french%20%E2%9D%A4%20tech-orange.svg?style=flat-square)
+[![Build Status](https://img.shields.io/travis/webstylestory/algolia-firebase-indexer.svg?style=flat-square)](https://travis-ci.org/webstylestory/algolia-firebase-indexer) [![Coverage Status](https://img.shields.io/coveralls/webstylestory/algolia-firebase-indexer.svg?style=flat-square)](https://coveralls.io/github/webstylestory/algolia-firebase-indexer) [![Dependency Status](https://img.shields.io/david/webstylestory/algolia-firebase-indexer.svg?style=flat-square)](https://david-dm.org/webstylestory/algolia-firebase-indexer) [![devDependency Status](https://img.shields.io/david/dev/webstylestory/algolia-firebase-indexer.svg?style=flat-square)](https://david-dm.org/webstylestory/algolia-firebase-indexer#info=devDependencies) ![Babel stage-2 badge](https://img.shields.io/badge/babel-stage%202-blue.svg?style=flat-square) [![License](http://img.shields.io/:license-mit-blue.svg?style=flat-square)](http://doge.mit-license.org) ![Made by french tech badge](https://img.shields.io/badge/made%20by-french%20%E2%9D%A4%20tech-orange.svg?style=flat-square)
 
 
 # algolia-firebase-indexer
@@ -138,7 +138,7 @@ To shutdown all console output (quiet mode), you can use the following :
 
 # Testing
 
-    npm test
+    FIREBASE_INSTANCE=CHANGE_ME FIREBASE_SECRET=CHANGE_ME ALGOLIA_APP_ID=CHANGE_ME ALGOLIA_API_KEY=CHANGE_ME DEBUG=quiet npm test
 
 (This should not need any global dependencies, but let me know if it does)
 
@@ -153,7 +153,7 @@ But I will have a look at anything you will have the time to bring together.
 
 ## License
 
-MIT © 2016 Aurélien Chivot
+MIT © 2016 WEB STYLE STORY SARL
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
