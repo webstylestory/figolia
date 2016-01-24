@@ -12,7 +12,7 @@ Inspired by Scott Smith's work in this [blog post](http://scottksmith.com/blog/2
       * [Firebase configuration](#firebase-configuration)
       * [Reindexing, incremental indexing](#reindexing-incremental-indexing)
   * [Developers](#developers)
-      * [Logging & Debugging](#logging-debugging)
+      * [Logging & Debugging](#logging--debugging)
       * [testing](#testing)
       * [contribute](#contribute)
   * [License](#license)
@@ -34,7 +34,7 @@ IMPORTANT: This is an early release, check the issues for the remaining tasks be
 
 ## Usage
 
-    node ./server.js
+    npm start
 
 For production setup, I strongly encourage the use of a good process manager 
 like [PM2](https://github.com/Unitech/pm2)
@@ -69,7 +69,7 @@ Edit the `config.example.js` file with the data relevant to your setup, and rena
         // WARNING: Without this field being corectly configured,
         // everything is re-indexed at rerun.
         lastModTime: 'modifiedAt',
-        // Firebase datasets to index in Algolia
+        // Firebase datasets to index in Algolia (examples)
         schema: {
             todoLists: {
                 // Firebase path
@@ -89,10 +89,9 @@ Edit the `config.example.js` file with the data relevant to your setup, and rena
                 ]
             },
             todoItems: {
-                // Second example dataset to index
+                // Second example dataset to index, minimal config
                 path: 'app/todoItems',
-                index: 'dev_todo_items',
-                key: 'itemId'
+                index: 'dev_todo_items'
             }
         }
     };
