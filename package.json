@@ -1,6 +1,6 @@
 {
   "name": "algolia-firebase-indexer",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Nodejs daemon that keeps Algolia search indexes up to date against Firebase datasets",
   "main": "server.js",
   "scripts": {
