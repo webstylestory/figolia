@@ -72,8 +72,8 @@ const firebaseFixtures = {
 //
 
 describe('Full reindexing of a dataset', function() {
-    // Take your time, baby (60sec)
-    this.timeout(60 * 1000);
+    // Take your time, baby (10min/test)
+    this.timeout(10 * 60 * 1000);
 
     let fb, algolia, config;
 

@@ -33,8 +33,8 @@ const goodConfig = {
 };
 
 describe('Third party services initialization', function() {
-    // Take your time, baby (30sec)
-    this.timeout(30 * 1000);
+    // Take your time, baby (1min/test)
+    this.timeout(60 * 1000);
 
     let config;
 

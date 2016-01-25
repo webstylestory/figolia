@@ -48,7 +48,7 @@ const algoliaFixtures = [
 
 describe('Checking existence of an Algolia index', function() {
 
-    // Take your time, baby (60sec)
+    // Take your time, baby (1min/test)
     this.timeout(60 * 1000);
 
     let algolia;
