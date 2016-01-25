@@ -76,11 +76,6 @@ const fullReindex = ({ CONFIG, dataset, fb, algolia }) => {
                 debug(`Setting ${tempIndexName} index settings? ${settings}`);
                 return settings ? tempIndex.setSettings(settings) : null;
             })
-            // Wait for the task to actually finish
-            // .then(res => {
-            //     debug(`Waiting setting ${tempIndexName} done ${res}`);
-            //     return tempIndex.waitTask(res.taskID);
-            // })
             // Atomically replace index by the new one
             .then(() => {
                 debug(`Moving index ${tempIndexName} to ${dataset.index}`);
@@ -91,7 +86,6 @@ const fullReindex = ({ CONFIG, dataset, fb, algolia }) => {
             // .then(() => storeCurrentIndexTime({ CONFIG, dataset, fb }))
             .then(() => {
                 info(`Reindexed ${dataset.index}, number of items: ${objectsToIndex.length}`);
-                return objectsToIndex.length;
             });
     })
 
