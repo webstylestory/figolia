@@ -143,8 +143,14 @@ describe('Full reindexing of a dataset', function() {
         config = { ...baseConfig };
     });
 
-    it('should throw an error if services are missing', function() {
-        expectCalling(fullReindex).withArgs().to.throw(Error)
+    it('should throw an error if services are missing', function(done) {
+
+        fullReindex({ config, dataset: { path: 'any' }, fb, algolia: null })
+            .catch(err => {
+                expect(err).to.be.instanceof(Error);
+                done();
+            });
+
     });
 
     it('should create Algolia index, if missing', function() {

@@ -77,6 +77,7 @@ describe('Third party services initialization', function() {
     it('should connect to Algolia with a valid config', function() {
 
         expectCalling(initServices).withArgs(config).to.not.throw(Error);
+
         return initServices(config)
             .then(({ algolia }) => algolia.listIndexes());
 

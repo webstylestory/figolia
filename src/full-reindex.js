@@ -98,7 +98,6 @@ const fullReindex = ({ CONFIG, dataset, fb, algolia }) => {
     // Catch any error in this promise chain and report it
     .catch(err => {
         throw new Error(`[ERROR] Error while reindexing ${dataset.index}: ${err}`);
-        console.trace(); // TODO: add multi-callback trace here
     });
 
 };
