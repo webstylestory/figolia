@@ -10,31 +10,35 @@ const debug = Debug('main');
 // Main server
 function main(CONFIG) {
 
-    const { fb, algolia } = initServices(CONFIG);
-
     const envName = process.env.NODE_ENV === 'production' ? 'PRODUCTION' : 'DEVELOPMENT';
     info(`Starting server in ${envName} environment.`);
 
     debug('Current config: ');
     debug(prettyjson.render(CONFIG));
 
-    for (let key in CONFIG.schema) {
+    initServices(CONFIG).then(({ fb, agolia }) => {
 
-        let dataset = CONFIG.schema[key];
+        for (let key in CONFIG.schema) {
 
-        // let promise = getLastIndexingTime(dataset);
+            let dataset = CONFIG.schema[key];
 
-        // if (!promise) {
-        //     promise = fullReindex(dataset);
-        // }
+            // let promise = getLastIndexingTime(dataset);
 
-        // promise
-        //     .then(listenFirebaseForIndexing)
-        //     .catch(err => console.error(err));
+            // if (!promise) {
+            //     promise = fullReindex(dataset);
+            // }
 
-        fullReindex({ CONFIG, dataset, fb, algolia });
+            // promise
+            //     .then(listenFirebaseForIndexing)
+            //     .catch(err => console.error(err));
 
-    }
+            return fullReindex({ CONFIG, dataset, fb, algolia });
+        }
+    })
+
+    .catch(err => {
+        throw new Error(`[ERROR] in main loop: ${err}`);
+    });
 }
 
 export default main;
