@@ -28,6 +28,8 @@ IMPORTANT: This is an early release, check the issues for the remaining tasks be
 
 ## Install
 
+    git clone https://github.com/webstylestory/algolia-firebase-indexer.git
+    cd algolia-firebase-indexer
     npm install
 
 ---
@@ -39,7 +41,7 @@ IMPORTANT: This is an early release, check the issues for the remaining tasks be
 For production setup, I strongly encourage the use of a good process manager 
 like [PM2](https://github.com/Unitech/pm2)
 
-The server needs a config file before it can runs, at least to provide your Algolia and Firebase API keys. See the section below about configuration.
+Important : the server needs a config file before it can runs, at least to provide your Algolia and Firebase API keys. See the [section below about configuration](#configuration).
 
 ---
 
@@ -53,9 +55,9 @@ Edit the `config.example.js` file with the data relevant to your setup, and rena
         firebase: {
             instance: 'TO_BE_CHANGED',
             secret: 'TO_BE_CHANGED',
-            // Where to store app stats and backend data in Firebase
-            dataPath: 'algolia',
-            // Firebase token will be generated with this uid
+            // Where to store server metadata
+            path: 'algolia',
+            // Firebase token will be generated with this uid (to write above path)
             uid: 'algolia'
         },
         // Algolia credentials
@@ -101,13 +103,11 @@ Edit the `config.example.js` file with the data relevant to your setup, and rena
 
 ### Firebase configuration
 
-In order for `algolia-firebase-indexer` to work properly, it has to store some backend 
-information in firebase. You can specify their storage path in the config - see above.
+In order for `algolia-firebase-indexer` to work properly, it has to store 
+the last known indexing date in firebase. You can specify the path where you
+want this information stored in the config ([see above](#configuration)).
 
-What is it stored, for each index ? 
-
-  * Number if items indexed
-  * Last known indexing date 
+This path will also be used to store data fixtures [if you run the tests](#testing).
 
 ### Reindexing, incremental indexing
 
@@ -115,10 +115,15 @@ This daemon supports a simple mode where every indexed object in Algolia is drop
 
 For more serious usage, this is not reccomended, as it can lead to many useless operations, and bandwith waste.
 
-The suggested usage is to specify `dataPath` and `uid` in `firebase` config, and give
-write access to that uid in the Firebase Rules (see Firebase docs). Also mandatory, the last modificated time of each items must be set in the schema definition.
+I really suggest to specify `path` and `uid` in `firebase` config field, and give
+write access to that uid in the Firebase Rules. Also mandatory, the last modificated 
+time of each items must be set in the schema definition (for example, 
+in a `modifiedAt` field). This is in your app, if you did not implement such feature 
+to track the last modified time of each of your objects, you'll have to do so 
+before using this server efficiently. 
 
-Don't forget to allow `algolia` user to write in your Firebase `algolia` path:
+To allow `algolia` user to write in your Firebase `algolia` path, 
+add the following in your Firebase instance security rules :
 
     // Let algolia-firebase-indexer daemon keep track of what is in sync
     "algolia": {                              
@@ -136,11 +141,8 @@ If you need more verbose information in the console, you can use the following c
 
     DEBUG=*,-babel*,-firebase*,-algolia* node server.js
 
-This will enable all the main app debug output, without the insanely verbose debug info from babel, algolia and firebase.
-
-This is equivalent to enabling all debug items in the app, *i.e.* :
-
-    DEBUG=main*,init* node server.js
+This will enable all the main app debug output, without the  verbose debug info 
+from babel, algolia and firebase.
 
 To shutdown all console output (quiet mode), you can use the following :
 
@@ -154,14 +156,20 @@ all the necessary credentials as environment variables while running `npm test`:
     FIREBASE_INSTANCE=CHANGE_ME FIREBASE_SECRET=CHANGE_ME ALGOLIA_APP_ID=CHANGE_ME \
     ALGOLIA_API_KEY=CHANGE_ME DEBUG=quiet npm test
 
-(This should not need any global dependencies, but let me know if it does)
+*Note: The tests are pretty slow, because they wait for all Algolia write
+and indexing operations to finish in order to validate the results*
+
+*Note bis: although the server can work with a read-only access to Firebase, the tests
+cannot, because they have to write fixture data, hence the need for a full Firebase
+configuration, including `secret` and `uid` ([see above](#firebase-configuration))*
 
 ### Contribute
 
 PRs are more than welcome! Your PR should not break current usage
 and pass all tests. Even better if you write the tests for the added code, and 
 even better if the new features are documented in this README ;-) 
-But I will have a look at anything you will have the time to bring together.
+
+I will have a look at anything you will have the time to propose.
 
 ---
 
