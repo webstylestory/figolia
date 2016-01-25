@@ -45,6 +45,10 @@ const fullReindex = ({ CONFIG, dataset, fb, algolia }) => {
             /* istanbul ignore else */
             if (values.hasOwnProperty(key)) {
                 let fbObject = values[key];
+                if (dataset.fields) {
+                    // Only keep defined fields in configuration
+                    fbObject = _pick(fbObject, dataset.fields);
+                }
                 // Algolia's objectID as per config, or default key.
                 // We use `values[key]` here instead of `fbObject`,
                 // in case the custom key is not beyond indexed fields.

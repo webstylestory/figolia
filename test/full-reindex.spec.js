@@ -223,6 +223,35 @@ describe('Full reindexing of a dataset', function() {
             });
     });
 
+    it('should sync Algolia with Firebase (standard key, specific fields)', function() {
+        config.schema.standardKeysFields = {
+            path: `${baseConfig.firebase.uid}/tests/testData`,
+            index: `${prefix}_standard_keys_fields`,
+            fields: ['text', 'numberField']
+        };
+
+        const args = {
+            config,
+            dataset: config.schema.standardKeysFields,
+            fb,
+            algolia
+        };
+
+        const index = algolia.initIndex(config.schema.standardKeysFields.index);
+
+        return fullReindex(args)
+            .then(() => index.search())
+            .then(res => {
+
+                expect(res.nbHits).to.equal(2);
+                // Only 4 fields, including `_highlightResult`
+                expect(Object.keys(res.hits[0]).length).to.equal(4);
+                expect(res.hits[0].objectID).to.match(/default/);
+
+            });
+
+    });
+
     it('should sync Algolia with Firebase (custom key, all fields)', function() {
         config.schema.customKeys = {
             path: `${baseConfig.firebase.uid}/tests/testData`,
