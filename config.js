@@ -15,9 +15,9 @@ let CONFIG = {
     firebase: {
         instance: 'TO_BE_CHANGED',
         secret: 'TO_BE_CHANGED',
-        // Where to store app stats and backend data in Firebase
-        dataPath: 'algolia',
-        // Firebase token will be generated with this uid
+        // Where to store server metadata
+        path: 'algolia',
+        // Firebase token will be generated with this uid (to write above path)
         uid: 'algolia'
     },
     // Algolia credentials
