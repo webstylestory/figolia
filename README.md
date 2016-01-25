@@ -69,8 +69,8 @@ Edit the `config.example.js` file with the data relevant to your setup, and rena
         // Optional, this field will be checked against last
         // run date to see if reindexing is necessary.
         // WARNING: Without this field being corectly configured,
-        // everything is re-indexed at rerun.
-        lastModTime: 'modifiedAt',
+        // everything is re-indexed at each rerun.
+        timestampField: 'modifiedAt',
         // Firebase datasets to index in Algolia (examples)
         schema: {
             todoLists: {

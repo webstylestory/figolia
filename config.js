@@ -30,7 +30,7 @@ let CONFIG = {
     // run date to see if reindexing is necessary.
     // WARNING: Without this field being correctly configured,
     // everything is re-indexed at rerun.
-    lastModTime: 'modifiedAt',
+    timestampField: 'modifiedAt',
     // Firebase datasets to index in Algolia
     schema: {
         todoLists: {

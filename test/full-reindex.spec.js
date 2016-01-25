@@ -25,6 +25,7 @@ const baseConfig = {
         applicationId: process.env.ALGOLIA_APP_ID,
         apiKey: process.env.ALGOLIA_API_KEY
     },
+    timestampField: 'modifiedAt',
     schema: {}
 };
 
@@ -33,7 +34,8 @@ const baseConfig = {
 // Fixture data
 //
 
-const prefix = 'TEST_sguijkasncbh83729374';
+const now = Date.now();
+const prefix = `ALGOLIA_FIREBASE_INDEXER_TEST_${now}`;
 
 const algoliaFixtures = [
     {
@@ -54,13 +56,15 @@ const firebaseFixtures = {
                 customId: 'customKey1',
                 text: 'blabla champagne blabla',
                 numberField: 42,
-                stringField: 'this is a test'
+                stringField: 'this is a test',
+                modifiedAt: now
             },
             defaultKey2: {
                 customId: 'customKey2',
                 text: 'blabla wine blabla',
                 numberField: 42,
-                stringField: 'this is a test'
+                stringField: 'this is a test',
+                modifiedAt: now
             }
         }
     }
@@ -75,7 +79,7 @@ describe('Full reindexing of a dataset', function() {
     // Take your time, baby (10min/test)
     this.timeout(10 * 60 * 1000);
 
-    let fb, algolia, config;
+    let fb, algolia, CONFIG = baseConfig;
 
     before('Initialize services, setup Algolia and Firebase test data', function() {
 
@@ -116,6 +120,14 @@ describe('Full reindexing of a dataset', function() {
             `${prefix}_custom_keys_temp`
         ];
 
+        const firebaseToDelete = [
+            `${baseConfig.firebase.uid}/tests`,
+            `${baseConfig.firebase.uid}/${prefix}_standard_keys`,
+            `${baseConfig.firebase.uid}/${prefix}_missing_index`,
+            `${baseConfig.firebase.uid}/${prefix}_standard_keys_fields`,
+            `${baseConfig.firebase.uid}/${prefix}_custom_keys`
+        ];
+
         // Remove test data
         return Promise.all(
                 indexesToDelete.map(index => algolia.deleteIndex(index))
@@ -135,17 +147,15 @@ describe('Full reindexing of a dataset', function() {
                 let index = algolia.initIndex(indexesToDelete[idx]);
                 return index.waitTask(taskID);
             })
-            // Remove test data in firebase (not full app path, justs uid/tests)
-            .then(() => fb.child(`${baseConfig.firebase.uid}/tests`).remove());
-    });
-
-    beforeEach(function() {
-        config = { ...baseConfig };
+            // Remove test data in firebase
+            .then(() => Promise.all(
+                    firebaseToDelete.map(path => fb.child(path).remove())
+                ));
     });
 
     it('should throw an error if services are missing', function(done) {
 
-        fullReindex({ config, dataset: { path: 'any' }, fb, algolia: null })
+        fullReindex({ CONFIG, dataset: { path: 'any' }, fb, algolia: null })
             .catch(err => {
                 expect(err).to.be.instanceof(Error);
                 done();
@@ -154,21 +164,21 @@ describe('Full reindexing of a dataset', function() {
     });
 
     it('should create Algolia index, if missing', function() {
-        config.schema.missingIndex = {
+        CONFIG.schema.missingIndex = {
             path: `${baseConfig.firebase.uid}/tests/testData`,
             index: `${prefix}_missing_index`
         };
 
         const args = {
-            config,
-            dataset: config.schema.missingIndex,
+            CONFIG,
+            dataset: CONFIG.schema.missingIndex,
             fb,
             algolia
         };
 
         return fullReindex(args)
             .then(() => algoliaIndexExists({
-                indexName: config.schema.missingIndex.index,
+                indexName: CONFIG.schema.missingIndex.index,
                 algolia
             }))
             .then(indexExists => {
@@ -179,19 +189,19 @@ describe('Full reindexing of a dataset', function() {
     });
 
     it('should empty Algolia index if Firebase path is missing or empty', function() {
-        config.schema.emptyPath = {
+        CONFIG.schema.emptyPath = {
             path: `${baseConfig.firebase.uid}/tests/thisPathIsEmpty`,
             index: `${prefix}_standard_keys`
         };
 
         const args = {
-            config,
-            dataset: config.schema.emptyPath,
+            CONFIG,
+            dataset: CONFIG.schema.emptyPath,
             fb,
             algolia
         };
 
-        const index = algolia.initIndex(config.schema.emptyPath.index);
+        const index = algolia.initIndex(CONFIG.schema.emptyPath.index);
 
         return fullReindex(args)
             .then(() => index.search())
@@ -203,19 +213,19 @@ describe('Full reindexing of a dataset', function() {
     });
 
     it('should sync Algolia with Firebase (standard key, all fields)', function() {
-        config.schema.standardKeys = {
+        CONFIG.schema.standardKeys = {
             path: `${baseConfig.firebase.uid}/tests/testData`,
             index: `${prefix}_standard_keys`
         };
 
         const args = {
-            config,
-            dataset: config.schema.standardKeys,
+            CONFIG,
+            dataset: CONFIG.schema.standardKeys,
             fb,
             algolia
         };
 
-        const index = algolia.initIndex(config.schema.standardKeys.index);
+        const index = algolia.initIndex(CONFIG.schema.standardKeys.index);
 
         return fullReindex(args)
             .then(() => index.search())
@@ -223,27 +233,27 @@ describe('Full reindexing of a dataset', function() {
 
                 expect(res.nbHits).to.equal(2);
                 // There is `_highlightResult` field in addition to object fileds
-                expect(Object.keys(res.hits[0]).length).to.equal(6);
+                expect(Object.keys(res.hits[0]).length).to.equal(7);
                 expect(res.hits[0].objectID).to.match(/default/);
 
             });
     });
 
     it('should sync Algolia with Firebase (standard key, specific fields)', function() {
-        config.schema.standardKeysFields = {
+        CONFIG.schema.standardKeysFields = {
             path: `${baseConfig.firebase.uid}/tests/testData`,
             index: `${prefix}_standard_keys_fields`,
             fields: ['text', 'numberField']
         };
 
         const args = {
-            config,
-            dataset: config.schema.standardKeysFields,
+            CONFIG,
+            dataset: CONFIG.schema.standardKeysFields,
             fb,
             algolia
         };
 
-        const index = algolia.initIndex(config.schema.standardKeysFields.index);
+        const index = algolia.initIndex(CONFIG.schema.standardKeysFields.index);
 
         return fullReindex(args)
             .then(() => index.search())
@@ -259,46 +269,72 @@ describe('Full reindexing of a dataset', function() {
     });
 
     it('should sync Algolia with Firebase (custom key, all fields)', function() {
-        config.schema.customKeys = {
+        CONFIG.schema.customKeys = {
             path: `${baseConfig.firebase.uid}/tests/testData`,
             index: `${prefix}_custom_keys`,
             key: 'customId'
         };
 
         const args = {
-            config,
-            dataset: config.schema.customKeys,
+            CONFIG,
+            dataset: CONFIG.schema.customKeys,
             fb,
             algolia
         };
 
-        const index = algolia.initIndex(config.schema.customKeys.index);
+        const index = algolia.initIndex(CONFIG.schema.customKeys.index);
 
         return fullReindex(args)
             .then(() => index.search())
             .then(res => {
 
                 expect(res.nbHits).to.equal(2);
-                expect(Object.keys(res.hits[0]).length).to.equal(6);
+                expect(Object.keys(res.hits[0]).length).to.equal(7);
                 expect(res.hits[0].objectID).to.match(/custom/);
 
             });
     });
 
-    it('should keep algolia index settings', function() {
-        config.schema.standardKeys = {
+    it('should store last object timestamp', function() {
+        CONFIG.schema.standardKeys = {
             path: `${baseConfig.firebase.uid}/tests/testData`,
             index: `${prefix}_standard_keys`
         };
 
         const args = {
-            config,
-            dataset: config.schema.standardKeys,
+            CONFIG,
+            dataset: CONFIG.schema.standardKeys,
             fb,
             algolia
         };
 
-        let index = algolia.initIndex(config.schema.standardKeys.index);
+        const index = algolia.initIndex(CONFIG.schema.standardKeys.index);
+
+        return fullReindex(args)
+            .then(() => fb.child(
+                    `${CONFIG.firebase.uid}/${CONFIG.schema.standardKeys.index}/ts`
+                ).once('value'))
+            .then(res => {
+
+                expect(res.val()).to.equal(now);
+
+            })
+    });
+
+    it('should keep algolia index settings', function() {
+        CONFIG.schema.standardKeys = {
+            path: `${baseConfig.firebase.uid}/tests/testData`,
+            index: `${prefix}_standard_keys`
+        };
+
+        const args = {
+            CONFIG,
+            dataset: CONFIG.schema.standardKeys,
+            fb,
+            algolia
+        };
+
+        let index = algolia.initIndex(CONFIG.schema.standardKeys.index);
 
         let previousSettings;
 
