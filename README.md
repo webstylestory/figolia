@@ -3,7 +3,9 @@
 
 # algolia-firebase-indexer
 
-Nodejs daemon that keeps Algolia search indexes up to date against a Firebase dataset
+⚡️ Keep your Algolia search indexes in sync with your Firebase datasets!
+
+When using Firebase as a web or mobile app backend, Algolia search-as-a-service is a really nice addition, considering the poor search and querying capabilities of Firebase. This server is the perfect companion to make their synchronization happen in no time.
 
 Inspired by Scott Smith's work in this [blog post](http://scottksmith.com/blog/2014/12/09/algolia-real-time-search-with-firebase/)
 

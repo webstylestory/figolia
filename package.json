@@ -1,7 +1,7 @@
 {
   "name": "algolia-firebase-indexer",
   "version": "0.2.0",
-  "description": "Keep your Algolia search indexes in sync with your Firebase datasets!",
+  "description": "⚡️ Keep your Algolia search indexes in sync with your Firebase datasets!",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
