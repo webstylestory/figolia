@@ -1,8 +1,9 @@
 import Promise from 'bluebird';
 import Debug from 'debug';
-import { pick as _pick, maxBy as _maxBy, values as _values } from 'lodash';
+import { pick as _pick, values as _values } from 'lodash';
 
 import algoliaIndexExists from './algolia-index-exists.js';
+import storeLastTimestamp from './store-last-timestamp.js';
 
 const info = Debug('info:full-reindex');
 const debug = Debug('full-reindex');
@@ -83,15 +84,12 @@ const fullReindex = ({ CONFIG, dataset, fb, algolia }) => {
             })
             // Wait for the task to actually finish
             .then(res => tempIndex.waitTask(res.taskID))
-            .then(() => {
-
-                if (CONFIG.timestampField && CONFIG.firebase.uid) {
-                    let oldestObject = _maxBy(_values(values), CONFIG.timestampField);
-                    return fb
-                        .child(`${CONFIG.firebase.uid}/${dataset.index}/ts`)
-                        .set(oldestObject[CONFIG.timestampField]);
-                }
-            })
+            .then(() => storeLastTimestamp({
+                objects: _values(values),
+                CONFIG,
+                dataset,
+                fb
+            }))
             .then(() => {
                 info(`Reindexed ${dataset.index}, number of items: ${objectsToIndex.length}`);
             });
