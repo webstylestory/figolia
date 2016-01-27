@@ -76,15 +76,14 @@ describe('Store last timestamp of objects', function() {
 
     });
 
-    after('Cleaning up Algolia and Firebase test data', function() {
+    after('Cleaning up Firebase test data', function() {
 
         // Remove test data
         return fb.child(`${baseConfig.firebase.uid}/${prefix}_test_set`).remove();
 
     });
 
-
-    it('should do nothing if called without a valid config', function() {
+    it('should eventually return null if called without a valid config', function() {
 
         CONFIG.firebase = {
             ...CONFIG.firebase,
@@ -92,9 +91,12 @@ describe('Store last timestamp of objects', function() {
             uid: ''
         };
 
-        let res = storeLastTimestamp({ objects, CONFIG, dataset: null, fb });
+        return storeLastTimestamp({ objects, CONFIG, dataset: null, fb })
+            .then(res => {
 
-        expect(res).to.be.undefined;
+                expect(res).to.be.null;
+
+            });
 
     });
 
@@ -108,7 +110,7 @@ describe('Store last timestamp of objects', function() {
         return res
             .then(() => {
                 return fb
-                    .child(`${baseConfig.firebase.uid}/${prefix}_test_set/ts`)
+                    .child(`${CONFIG.firebase.uid}/${prefix}_test_set/ts`)
                     .once('value');
             })
             .then(snap => {
