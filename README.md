@@ -1,4 +1,4 @@
-[![Build Status](https://img.shields.io/travis/webstylestory/algolia-firebase-indexer.svg?style=flat-square)](https://travis-ci.org/webstylestory/algolia-firebase-indexer) [![Coverage Status](https://img.shields.io/coveralls/webstylestory/algolia-firebase-indexer.svg?style=flat-square)](https://coveralls.io/github/webstylestory/algolia-firebase-indexer) [![Dependency Status](https://img.shields.io/david/webstylestory/algolia-firebase-indexer.svg?style=flat-square)](https://david-dm.org/webstylestory/algolia-firebase-indexer) [![devDependency Status](https://img.shields.io/david/dev/webstylestory/algolia-firebase-indexer.svg?style=flat-square)](https://david-dm.org/webstylestory/algolia-firebase-indexer#info=devDependencies) ![Babel stage-2 badge](https://img.shields.io/badge/babel-stage%202-blue.svg?style=flat-square) [![License](http://img.shields.io/:license-mit-blue.svg?style=flat-square)](http://doge.mit-license.org) ![Made by french tech badge](https://img.shields.io/badge/made%20by-french%20%E2%9D%A4%20tech-orange.svg?style=flat-square)
+[![Build Status](https://img.shields.io/travis/webstylestory/algolia-firebase-indexer.svg?style=flat-square)](https://travis-ci.org/webstylestory/algolia-firebase-indexer) [![Coverage Status](https://img.shields.io/coveralls/webstylestory/algolia-firebase-indexer.svg?style=flat-square)](https://coveralls.io/github/webstylestory/algolia-firebase-indexer) [![Dependency Status](https://img.shields.io/david/webstylestory/algolia-firebase-indexer.svg?style=flat-square)](https://david-dm.org/webstylestory/algolia-firebase-indexer) [![devDependency Status](https://img.shields.io/david/dev/webstylestory/algolia-firebase-indexer.svg?style=flat-square)](https://david-dm.org/webstylestory/algolia-firebase-indexer#info=devDependencies) [![Babel stage-2 badge](https://img.shields.io/badge/babel-stage%202-blue.svg?style=flat-square)](https://babeljs.io/docs/plugins/preset-stage-2/) [![License](http://img.shields.io/:license-mit-blue.svg?style=flat-square)](https://raw.githubusercontent.com/webstylestory/algolia-firebase-indexer/master/LICENSE) [![Made by french tech badge](https://img.shields.io/badge/made%20by-french%20%E2%9D%A4%20tech-orange.svg?style=flat-square)](http://webstylestory.com)
 
 
 # algolia-firebase-indexer
@@ -7,7 +7,7 @@
 
 When using Firebase as a web or mobile app backend, Algolia search-as-a-service is a really nice addition, considering the poor search and querying capabilities of Firebase. This server is the perfect companion to make their synchronization happen in no time.
 
-Inspired by Scott Smith's work in this [blog post](http://scottksmith.com/blog/2014/12/09/algolia-real-time-search-with-firebase/)
+*(Codebase inspired by Scott Smith's work in this [blog post](http://scottksmith.com/blog/2014/12/09/algolia-real-time-search-with-firebase/)*
 
   * [Usage](#usage)
   * [Configuration](#configuration)
@@ -158,8 +158,12 @@ all the necessary credentials as environment variables while running `npm test`:
     FIREBASE_INSTANCE=CHANGE_ME FIREBASE_SECRET=CHANGE_ME ALGOLIA_APP_ID=CHANGE_ME \
     ALGOLIA_API_KEY=CHANGE_ME DEBUG=quiet npm test
 
-*Note: The tests are pretty slow, because they wait for all Algolia write
-and indexing operations to finish in order to validate the results*
+Note: The tests are pretty slow, because they wait for all Algolia write
+and indexing operations to finish in order to validate the results. You can speed 
+up your testing of a specific file by appending its name to the command line:
+
+    FIREBASE_INSTANCE=CHANGE_ME FIREBASE_SECRET=CHANGE_ME ALGOLIA_APP_ID=CHANGE_ME \
+    ALGOLIA_API_KEY=CHANGE_ME DEBUG=quiet npm test ./test/testfile.spec.js
 
 *Note bis: although the server can work with a read-only access to Firebase, the tests
 cannot, because they have to write fixture data, hence the need for a full Firebase
