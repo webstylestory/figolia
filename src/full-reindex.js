@@ -1,5 +1,6 @@
 import Promise from 'bluebird';
 import Debug from 'debug';
+import prettyjson from 'prettyjson';
 import { pick as _pick, values as _values } from 'lodash';
 
 import algoliaIndexExists from './algolia-index-exists.js';
@@ -14,9 +15,17 @@ const debug = Debug('full-reindex');
 //
 //  @return Promise
 //
-const fullReindex = ({ CONFIG, dataset, fb, algolia }) => {
+const fullReindex = ({ ts, CONFIG, dataset, fb, algolia }) => {
 
-    return fb.child(dataset.path).once('value').then(data => {
+    let objectQuery = ts && CONFIG.timestampField ?
+
+        fb.child(dataset.path)
+            .orderByChild(CONFIG.timestampField)
+            .startAt(ts + 1) :
+
+        fb.child(dataset.path);
+
+    return objectQuery.once('value').then(data => {
         // Array of objects to index
         let objectsToIndex = [];
         let errorMsg;
@@ -27,9 +36,9 @@ const fullReindex = ({ CONFIG, dataset, fb, algolia }) => {
         let index = algolia.initIndex(dataset.index);
 
         // Get all objects from Firebase child
-        let values = data.val();
+        let firebaseObjects = data.val();
 
-        if (!values) {
+        if (!firebaseObjects) {
             // If Firebase dataset empty, just clear the Algolia index
             info(`[WARN] Firebase dataset '${dataset.path}' is empty`);
             return algoliaIndexExists({
@@ -42,25 +51,27 @@ const fullReindex = ({ CONFIG, dataset, fb, algolia }) => {
 
         info(`Fully reindexing ${dataset.path}...`);
 
-        for (let key in values) {
+        for (let key in firebaseObjects) {
             /* istanbul ignore else */
-            if (values.hasOwnProperty(key)) {
-                let fbObject = values[key];
+            if (firebaseObjects.hasOwnProperty(key)) {
+                let fbObject = firebaseObjects[key];
                 if (dataset.fields) {
                     // Only keep defined fields in configuration
                     fbObject = _pick(fbObject, dataset.fields);
                 }
                 // Algolia's objectID as per config, or default key.
-                // We use `values[key]` here instead of `fbObject`,
+                // We use `firebaseObjects[key]` here instead of `fbObject`,
                 // in case the custom key is not beyond indexed fields.
-                fbObject.objectID = dataset.key ? values[key][dataset.key] : key;
+                fbObject.objectID = dataset.key ?
+                    firebaseObjects[key][dataset.key] : key;
+
                 objectsToIndex.push(fbObject);
             }
         }
 
         // Add objects to the new index
         // (will return a promise)
-        debug(`Putting objects in index ${tempIndexName}: ${objectsToIndex}`);
+        debug(`Putting objects in index ${tempIndexName}: ${prettyjson.render(objectsToIndex)}`);
         return tempIndex.saveObjects(objectsToIndex)
             // Wait for the task to actually finish
             .then(res => tempIndex.waitTask(res.taskID))
@@ -85,13 +96,14 @@ const fullReindex = ({ CONFIG, dataset, fb, algolia }) => {
             // Wait for the task to actually finish
             .then(res => tempIndex.waitTask(res.taskID))
             .then(() => storeLastTimestamp({
-                objects: _values(values),
+                objects: _values(firebaseObjects),
                 CONFIG,
                 dataset,
                 fb
             }))
-            .then(() => {
+            .then(ts => {
                 info(`Reindexed ${dataset.index}, number of items: ${objectsToIndex.length}`);
+                return ts;
             });
     })
 

@@ -100,7 +100,7 @@ describe('Store last timestamp of objects', function() {
 
     });
 
-    it('should store last object timestamp', function() {
+    it('should return last object timestamp and store it in Firebase', function() {
         let dataset = {
             index: `${prefix}_test_set`
         };
@@ -108,7 +108,10 @@ describe('Store last timestamp of objects', function() {
         let res = storeLastTimestamp({ objects, CONFIG, dataset, fb });
 
         return res
-            .then(() => {
+            .then(ts => {
+
+                expect(ts).to.equal(now);
+
                 return fb
                     .child(`${CONFIG.firebase.uid}/${prefix}_test_set/ts`)
                     .once('value');
