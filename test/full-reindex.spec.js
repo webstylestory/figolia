@@ -115,13 +115,17 @@ describe('Full reindexing of a dataset', function() {
         const indexesToDelete = [
             `${prefix}_standard_keys`,
             `${prefix}_missing_index`,
-            `${prefix}_standard_keys_fields`,
+            `${prefix}_standard_keys_inclusion`,
+            `${prefix}_standard_keys_exclusion`,
+            `${prefix}_standard_keys_bothclusion`,
             `${prefix}_custom_keys`,
             `${prefix}_standard_keys_timestamp`,
             // Also try to delete temp indexes, just in case
             `${prefix}_standard_keys_temp`,
             `${prefix}_missing_index_temp`,
-            `${prefix}_standard_keys_fields_temp`,
+            `${prefix}_standard_keys_inclusion_temp`,
+            `${prefix}_standard_keys_exclusion_temp`,
+            `${prefix}_standard_keys_bothclusion_temp`,
             `${prefix}_custom_keys_temp`,
             `${prefix}_standard_keys_timestamp_temp`
         ];
@@ -130,7 +134,9 @@ describe('Full reindexing of a dataset', function() {
             `${baseConfig.firebase.uid}/tests`,
             `${baseConfig.firebase.uid}/${prefix}_standard_keys`,
             `${baseConfig.firebase.uid}/${prefix}_missing_index`,
-            `${baseConfig.firebase.uid}/${prefix}_standard_keys_fields`,
+            `${baseConfig.firebase.uid}/${prefix}_standard_keys_inclusion`,
+            `${baseConfig.firebase.uid}/${prefix}_standard_keys_exclusion`,
+            `${baseConfig.firebase.uid}/${prefix}_standard_keys_bothclusion`,
             `${baseConfig.firebase.uid}/${prefix}_custom_keys`,
             `${baseConfig.firebase.uid}/${prefix}_standard_keys_timestamp`
         ];
@@ -241,26 +247,27 @@ describe('Full reindexing of a dataset', function() {
                 expect(res.nbHits).to.equal(3);
                 // There is `_highlightResult` field in addition to object fileds
                 expect(Object.keys(res.hits[0])).to.have.length(6);
-                expect(res.hits[0].objectID).to.match(/default/);
+                expect(res.hits[0]).to.have.property('objectID')
+                    .that.match(/default/);
 
             });
     });
 
-    it('should sync Algolia with Firebase (standard key, specific fields, no timestamp)', function() {
-        CONFIG.schema.standardKeysFields = {
+    it('should sync Algolia with Firebase (standard key, field inclusion filter, no timestamp)', function() {
+        CONFIG.schema.standardKeysInclusion = {
             path: `${baseConfig.firebase.uid}/tests/testData`,
-            index: `${prefix}_standard_keys_fields`,
-            fields: ['text', 'numberField']
+            index: `${prefix}_standard_keys_inclusion`,
+            includeFields: ['text', 'numberField']
         };
 
         const args = {
             CONFIG,
-            dataset: CONFIG.schema.standardKeysFields,
+            dataset: CONFIG.schema.standardKeysInclusion,
             fb,
             algolia
         };
 
-        const index = algolia.initIndex(CONFIG.schema.standardKeysFields.index);
+        const index = algolia.initIndex(CONFIG.schema.standardKeysInclusion.index);
 
         return fullReindex(args)
             .then(() => index.search())
@@ -269,7 +276,81 @@ describe('Full reindexing of a dataset', function() {
                 expect(res.nbHits).to.equal(3);
                 // Only 3 fields, including `_highlightResult`
                 expect(Object.keys(res.hits[0])).to.have.length(4);
-                expect(res.hits[0].objectID).to.match(/default/);
+                expect(res.hits[0]).to.not.have.property('customId');
+                expect(res.hits[0]).to.not.have.property('modifiedAt');
+                expect(res.hits[0]).to.have.property('text');
+                expect(res.hits[0]).to.have.property('numberField');
+                expect(res.hits[0]).to.have.property('objectID')
+                    .that.match(/default/);
+
+            });
+
+    });
+
+    it('should sync Algolia with Firebase (standard key, field exclusion filter, no timestamp)', function() {
+        CONFIG.schema.standardKeysExclusion = {
+            path: `${baseConfig.firebase.uid}/tests/testData`,
+            index: `${prefix}_standard_keys_exclusion`,
+            excludeFields: ['numberField', 'text']
+        };
+
+        const args = {
+            CONFIG,
+            dataset: CONFIG.schema.standardKeysExclusion,
+            fb,
+            algolia
+        };
+
+        const index = algolia.initIndex(CONFIG.schema.standardKeysExclusion.index);
+
+        return fullReindex(args)
+            .then(() => index.search())
+            .then(res => {
+
+                expect(res.nbHits).to.equal(3);
+                // Only 3 fields, including `_highlightResult`
+                expect(Object.keys(res.hits[0])).to.have.length(4);
+                expect(res.hits[0]).to.not.have.property('text');
+                expect(res.hits[0]).to.not.have.property('numberField');
+                expect(res.hits[0]).to.have.property('customId');
+                expect(res.hits[0]).to.have.property('modifiedAt');
+                expect(res.hits[0]).to.have.property('objectID')
+                    .that.match(/default/);
+
+            });
+
+    });
+
+    it('should sync Algolia with Firebase (standard key, field exclusion filter, no timestamp)', function() {
+        CONFIG.schema.standardKeysBothclusion = {
+            path: `${baseConfig.firebase.uid}/tests/testData`,
+            index: `${prefix}_standard_keys_bothclusion`,
+            includeFields: ['numberField', 'text', 'modifiedAt'],
+            excludeFields: ['numberField']
+        };
+
+        const args = {
+            CONFIG,
+            dataset: CONFIG.schema.standardKeysBothclusion,
+            fb,
+            algolia
+        };
+
+        const index = algolia.initIndex(CONFIG.schema.standardKeysBothclusion.index);
+
+        return fullReindex(args)
+            .then(() => index.search())
+            .then(res => {
+
+                expect(res.nbHits).to.equal(3);
+                // Only 3 fields, including `_highlightResult`
+                expect(Object.keys(res.hits[0])).to.have.length(4);
+                expect(res.hits[0]).to.not.have.property('numberField');
+                expect(res.hits[0]).to.not.have.property('customId');
+                expect(res.hits[0]).to.have.property('modifiedAt');
+                expect(res.hits[0]).to.have.property('text');
+                expect(res.hits[0]).to.have.property('objectID')
+                    .that.match(/default/);
 
             });
 
@@ -297,7 +378,8 @@ describe('Full reindexing of a dataset', function() {
 
                 expect(res.nbHits).to.equal(3);
                 expect(Object.keys(res.hits[0])).to.have.length(6);
-                expect(res.hits[0].objectID).to.match(/custom/);
+                expect(res.hits[0]).to.have.property('objectID')
+                    .that.match(/custom/);
 
             });
     });
@@ -381,8 +463,12 @@ describe('Full reindexing of a dataset', function() {
             .then(res => {
 
                 expect(res.nbHits).to.equal(2);
-                expect(res.hits[0].modifiedAt).to.be.above(timestamp);
-                expect(res.hits[1].modifiedAt).to.be.above(timestamp);
+                expect(res.hits[0])
+                    .to.have.property('modifiedAt')
+                    .that.is.above(timestamp);
+                expect(res.hits[1])
+                    .to.have.property('modifiedAt')
+                    .that.is.above(timestamp);
 
             });
     });
@@ -415,8 +501,12 @@ describe('Full reindexing of a dataset', function() {
             .then(res => {
 
                 expect(res.nbHits).to.equal(2);
-                expect(res.hits[0].modifiedAt).to.be.above(timestamp);
-                expect(res.hits[1].modifiedAt).to.be.above(timestamp);
+                expect(res.hits[0])
+                    .to.have.property('modifiedAt')
+                    .that.is.above(timestamp);
+                expect(res.hits[1])
+                    .to.have.property('modifiedAt')
+                    .that.is.above(timestamp);
 
             });
     });

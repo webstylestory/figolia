@@ -70,6 +70,7 @@ Edit the `config.example.js` file with the data relevant to your setup, and rena
         },
         // Optional, this field will be checked against last
         // run date to see if reindexing is necessary.
+        // Field type must be UNIX timestamp (example Javascript Date.now()).
         // WARNING: Without this field being corectly configured,
         // everything is re-indexed at each rerun.
         timestampField: 'modifiedAt',
@@ -85,11 +86,16 @@ Edit the `config.example.js` file with the data relevant to your setup, and rena
                 key: 'id',
                 // Optional, list of fields to index
                 // (otherwise, every field will be indexed)
-                include: [
+                includeFields: [
                     'name',
-                    'created',
-                    'modified',
-                    'itemsNumber'
+                    'modifiedAt'
+                ],
+                // Optional, list of fields to exclude from index
+                // Note: if both are specified, `excludeFields` 
+                // is applied *after* `includeFields`
+                excludeFields: [
+                    'passwdHash',
+                    'private'
                 ]
             },
             todoItems: {

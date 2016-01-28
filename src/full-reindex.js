@@ -1,7 +1,7 @@
 import Promise from 'bluebird';
 import Debug from 'debug';
 import prettyjson from 'prettyjson';
-import { pick as _pick, values as _values } from 'lodash';
+import { pick as _pick, omit as _omit, values as _values } from 'lodash';
 
 import algoliaIndexExists from './algolia-index-exists.js';
 import storeLastTimestamp from './store-last-timestamp.js';
@@ -55,9 +55,13 @@ const fullReindex = ({ ts, CONFIG, dataset, fb, algolia }) => {
             /* istanbul ignore else */
             if (firebaseObjects.hasOwnProperty(key)) {
                 let fbObject = firebaseObjects[key];
-                if (dataset.fields) {
+                if (dataset.includeFields) {
                     // Only keep defined fields in configuration
-                    fbObject = _pick(fbObject, dataset.fields);
+                    fbObject = _pick(fbObject, dataset.includeFields);
+                }
+                if (dataset.excludeFields) {
+                    // Exclude defined fields in configuration
+                    fbObject = _omit(fbObject, dataset.excludeFields);
                 }
                 // Algolia's objectID as per config, or default key.
                 // We use `firebaseObjects[key]` here instead of `fbObject`,
