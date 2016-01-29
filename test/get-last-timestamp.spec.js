@@ -3,11 +3,10 @@ import { expect } from 'chai';
 import initServices from '../src/init-services';
 import getLastTimestamp from '../src/get-last-timestamp';
 
-// Helper function to `expect` functions with args
-// Usage : expectCalling(myFunc).withArgs('badArg').to.throw(/gtfo/)
-const expectCalling = func => ({ withArgs: (...args) => expect(() => func(...args)) });
-
 // Environment variables must be provided for the tests to work
+
+const now = Date.now();
+const prefix = `ALGOLIA_FIREBASE_INDEXER_TEST_${now}`;
 
 const CONFIG = {
     firebase: {
@@ -23,17 +22,6 @@ const CONFIG = {
     timestampField: 'modifiedAt',
     schema: {}
 };
-
-
-//
-// Fixture data
-//
-
-const now = Date.now();
-const prefix = `ALGOLIA_FIREBASE_INDEXER_TEST_${now}`;
-
-let firebaseFixtures = { ts: now };
-
 
 //
 // The tests
@@ -53,7 +41,7 @@ describe('Get last indexing timestamp of dataset', function() {
                 fb = services.fb;
                 return fb
                     .child(`${CONFIG.firebase.uid}/${prefix}_test_set`)
-                    .set(firebaseFixtures);
+                    .set({ ts: now });
             });
 
     });

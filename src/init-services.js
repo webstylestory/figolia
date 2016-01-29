@@ -30,10 +30,10 @@ function initServices(CONFIG) {
     const fb = new Firebase(fbInstance);
 
     if (!!CONFIG.firebase.secret && !!CONFIG.firebase.uid) {
-        // Authenticate Firebase connection with provided secret / uid
         let tokenGenerator = new FirebaseTokenGenerator(CONFIG.firebase.secret);
         let token = tokenGenerator.createToken({ uid: CONFIG.firebase.uid });
 
+        // Authenticate Firebase connection with provided secret / uid
         return fb.authWithCustomToken(token)
             .then(() => {
                 info(

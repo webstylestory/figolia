@@ -12,8 +12,8 @@ const getLastTimestamp = ({ CONFIG, dataset, fb }) => {
     return fb
         .child(`${CONFIG.firebase.uid}/${dataset.index}/ts`)
         .once('value')
-        .then(res => {
-            return res && res.val() || null;
+        .then(fbRef => {
+            return fbRef && fbRef.val() || null;
         });
 
 };

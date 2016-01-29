@@ -36,23 +36,23 @@ describe('Third party services initialization', function() {
     // Take your time, baby (1min/test)
     this.timeout(60 * 1000);
 
-    let config;
+    let CONFIG;
 
     beforeEach(function() {
 
-        config = { ...goodConfig };
+        CONFIG = { ...goodConfig };
 
     });
 
     it('should init Firebase correctly with a valid config', function() {
 
-        expectCalling(initServices).withArgs(config).to.not.throw(Error);
+        expectCalling(initServices).withArgs(CONFIG).to.not.throw(Error);
 
-        return initServices(config)
+        return initServices(CONFIG)
             .then(({ fb }) => fb.child('.info').once('value'))
-            .then(data => {
+            .then(fbRef => {
 
-                expect(data.val()).to.be.ok
+                expect(fbRef.val()).to.be.ok
 
             });
 
@@ -60,15 +60,15 @@ describe('Third party services initialization', function() {
 
     it('should init Firebase correctly even without auth', function() {
 
-        config.firebase = _omit(config.firebase, ['secret', 'uid']);
+        CONFIG.firebase = _omit(CONFIG.firebase, ['secret', 'uid']);
 
-        expectCalling(initServices).withArgs(config).to.not.throw(Error);
+        expectCalling(initServices).withArgs(CONFIG).to.not.throw(Error);
 
-        return initServices(config)
+        return initServices(CONFIG)
             .then(({ fb }) => fb.child('.info').once('value'))
-            .then(data => {
+            .then(fbRef => {
 
-                expect(data.val()).to.be.ok
+                expect(fbRef.val()).to.be.ok
 
             });
 
@@ -76,18 +76,18 @@ describe('Third party services initialization', function() {
 
     it('should connect to Algolia with a valid config', function() {
 
-        expectCalling(initServices).withArgs(config).to.not.throw(Error);
+        expectCalling(initServices).withArgs(CONFIG).to.not.throw(Error);
 
-        return initServices(config)
+        return initServices(CONFIG)
             .then(({ algolia }) => algolia.listIndexes());
 
     });
 
     it('should throw if Firebase values are missing from config', function(done) {
 
-        config.firebase = badConfig.firebase;
+        CONFIG.firebase = badConfig.firebase;
 
-        expectCalling(initServices).withArgs(config).to.throw(/firebase/);
+        expectCalling(initServices).withArgs(CONFIG).to.throw(/firebase/);
 
         done();
 
@@ -95,9 +95,9 @@ describe('Third party services initialization', function() {
 
     it('should throw if Algolia values are missing from config', function(done) {
 
-        config.algolia = badConfig.algolia;
+        CONFIG.algolia = badConfig.algolia;
 
-        expectCalling(initServices).withArgs(config).to.throw(/algolia/);
+        expectCalling(initServices).withArgs(CONFIG).to.throw(/algolia/);
 
         done();
 

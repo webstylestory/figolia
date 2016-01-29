@@ -3,10 +3,6 @@ import { expect } from 'chai';
 import initServices from '../src/init-services';
 import storeLastTimestamp from '../src/store-last-timestamp';
 
-// Helper function to `expect` functions with args
-// Usage : expectCalling(myFunc).withArgs('badArg').to.throw(/gtfo/)
-const expectCalling = func => ({ withArgs: (...args) => expect(() => func(...args)) });
-
 // Environment variables must be provided for the tests to work
 
 const baseConfig = {
@@ -92,9 +88,9 @@ describe('Store last timestamp of objects', function() {
         };
 
         return storeLastTimestamp({ objects, CONFIG, dataset: null, fb })
-            .then(res => {
+            .then(ts => {
 
-                expect(res).to.be.null;
+                expect(ts).to.be.null;
 
             });
 
@@ -105,9 +101,9 @@ describe('Store last timestamp of objects', function() {
             index: `${prefix}_test_set`
         };
 
-        let res = storeLastTimestamp({ objects, CONFIG, dataset, fb });
+        let promise = storeLastTimestamp({ objects, CONFIG, dataset, fb });
 
-        return res
+        return promise
             .then(ts => {
 
                 expect(ts).to.equal(now);
@@ -116,9 +112,9 @@ describe('Store last timestamp of objects', function() {
                     .child(`${CONFIG.firebase.uid}/${prefix}_test_set/ts`)
                     .once('value');
             })
-            .then(snap => {
+            .then(fbRef => {
 
-                expect(snap.val()).to.equal(now);
+                expect(fbRef.val()).to.equal(now);
 
             })
     });

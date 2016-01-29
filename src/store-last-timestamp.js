@@ -14,13 +14,12 @@ const storeLastTimestamp = ({ objects, CONFIG, dataset, fb }) => {
         return Promise.resolve(null);
     }
 
-    let oldestObject = _maxBy(objects, CONFIG.timestampField);
+    let ts = _maxBy(objects, CONFIG.timestampField)[CONFIG.timestampField];
+
     return fb
         .child(`${CONFIG.firebase.uid}/${dataset.index}/ts`)
-        .set(oldestObject[CONFIG.timestampField])
-        .then(() => {
-            return oldestObject[CONFIG.timestampField];
-        })
+        .set(ts)
+        .then(() => ts);
 
 };
 
