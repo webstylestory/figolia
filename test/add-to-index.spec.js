@@ -552,7 +552,7 @@ describe('Indexing a group of objects', function() {
     //         });
     // });
 
-    it('E2E - should store last object timestamp', function() {
+    it('should store last object timestamp', function() {
         CONFIG.schema.standardKeys = {
             path: `${baseConfig.firebase.uid}/tests/testData`,
             index: `${prefix}_standard_keys`

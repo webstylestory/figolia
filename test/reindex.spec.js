@@ -1,20 +1,20 @@
 import { expect } from 'chai';
-import {
-    findIndex as _findIndex,
-    maxBy as _maxBy
-} from 'lodash';
+import { maxBy as _maxBy } from 'lodash';
+import prettyjson from 'prettyjson';
 
 import initServices from '../src/init-services';
-import reindex from '../src/reindex';
-import algoliaIndexExists from '../src/algolia-index-exists.js';
+import reindex from '../src/reindex.js';
 
 // Helper function to `expect` functions with args
-// Usage : expectCalling(myFunc).withArgs('badArg').to.throw(/gtfo/)
-const expectCalling = func => ({ withArgs: (...args) => expect(() => func(...args)) });
+// Usage : `expectCalling(myFunc).withArgs('badArg').to.throw(/gtfo/)`
+let expectCalling = func => ({ withArgs: (...args) => expect(() => func(...args)) });
 
 // Environment variables must be provided for the tests to work
 
-const baseConfig = {
+const now = Date.now();
+const prefix = `ALGOLIA_FIREBASE_INDEXER_TEST_${now}`;
+
+const CONFIG = {
     firebase: {
         instance: process.env.FIREBASE_INSTANCE,
         secret: process.env.FIREBASE_SECRET,
@@ -26,16 +26,18 @@ const baseConfig = {
         apiKey: process.env.ALGOLIA_API_KEY
     },
     timestampField: 'modifiedAt',
-    schema: {}
+    schema: {
+        test: {
+            path: 'algolia/tests/testData',
+            index: `${prefix}_standard_keys`
+        }
+    }
 };
 
 
 //
 // Fixture data
 //
-
-const now = Date.now();
-const prefix = `ALGOLIA_FIREBASE_INDEXER_TEST_${now}`;
 
 const algoliaFixtures = [
     {
@@ -50,7 +52,6 @@ const algoliaSettings =  {
 
 const firebaseFixtures = {
     tests: {
-        thisPathIsEmpty: {},
         testData: {
             defaultKey1: {
                 text: 'previously indexed item',
@@ -59,14 +60,16 @@ const firebaseFixtures = {
                 modifiedAt: now - 200
             },
             defaultKey2: {
-                text: 'first new item',
+                text: 'another item',
                 customId: 'customKey2',
                 numberField: 42,
                 modifiedAt: now - 100
-            },
+            }
+        },
+        newTestData: {
             defaultKey3: {
-                text: 'earliest new item',
-                customId: 'customKey3',
+                text: 'new item',
+                customId: 'customKey2',
                 numberField: 42,
                 modifiedAt: now
             }
@@ -79,51 +82,47 @@ const firebaseFixtures = {
 // The tests
 //
 
-describe('Full reindexing of a dataset', function() {
+describe('Indexing a Firebase dataset', function() {
     // Take your time, baby (10min/test)
     this.timeout(10 * 60 * 1000);
 
-    let fb, algolia, CONFIG = baseConfig;
+    let fb, algolia;
 
     before('Initialize services, setup Algolia and Firebase test data', function() {
 
-        // Init services
-        return initServices(baseConfig).then(services => {
-                fb = services.fb;
-                algolia = services.algolia;
-                const index = algolia.initIndex(`${prefix}_standard_keys`);
+        // Init services and test data
+        return initServices(CONFIG).then(services => {
+            fb = services.fb;
+            algolia = services.algolia;
+            const index = algolia.initIndex(`${prefix}_standard_keys`);
 
-                // Setup initial test data
-                return Promise.all([
+            return Promise.all([
                     index.setSettings(algoliaSettings),
                     index.saveObjects(algoliaFixtures)
-                ]);
-            })
-            .then(tasks => {
-                // Only wait th last item for faster processing
-                let lastTask = _maxBy(tasks, 'taskID');
-                return index.waitTask(lastTask.taskID);
-            })
-            .then(() => fb
-                .child(`${baseConfig.firebase.uid}`)
-                .set(firebaseFixtures)
-            );
+                ])
+                .then(tasks => {
+                    // Only wait th last item for faster processing
+                    let lastTask = _maxBy(tasks, 'taskID');
+                    return index.waitTask(lastTask.taskID);
+                })
+                .then(() => fb
+                    .child(`${CONFIG.firebase.uid}`)
+                    .set(firebaseFixtures)
+                );
+        });
+
     });
 
     after('Cleaning up Algolia and Firebase test data', function() {
 
         const indexesToDelete = [
             `${prefix}_standard_keys`,
-            `${prefix}_standard_keys_timestamp`,
-            // Also try to delete temp indexes, just in case
-            `${prefix}_standard_keys_temp`,
-            `${prefix}_standard_keys_timestamp_temp`
+            `${prefix}_standard_keys_temp`
         ];
 
         const firebaseToDelete = [
-            `${baseConfig.firebase.uid}/tests`,
-            `${baseConfig.firebase.uid}/${prefix}_standard_keys`,
-            `${baseConfig.firebase.uid}/${prefix}_standard_keys_timestamp`
+            `${CONFIG.firebase.uid}/tests`,
+            `${CONFIG.firebase.uid}/${prefix}_standard_keys`
         ];
 
         // Remove test data
@@ -151,74 +150,14 @@ describe('Full reindexing of a dataset', function() {
             ));
     });
 
-    it('should throw an error if services are missing', function(done) {
 
-        reindex({ CONFIG, dataset: { path: 'any' }, fb, algolia: null })
-            .catch(err => {
-                expect(err).to.be.instanceof(Error);
-                done();
-            });
+    it('should sync Algolia index with Firebase data', function() {
 
-    });
-
-    it('should not empty Algolia index if Firebase path is missing or empty, but ts provided', function() {
-        CONFIG.schema.emptyPath = {
-            path: `${baseConfig.firebase.uid}/tests/thisPathIsEmpty`,
-            index: `${prefix}_standard_keys`
-        };
-
-        const args = {
-            ts: now,
-            CONFIG,
-            dataset: CONFIG.schema.emptyPath,
-            fb,
-            algolia
-        };
-
-        const index = algolia.initIndex(CONFIG.schema.emptyPath.index);
-
-        return reindex(args)
-            .then(() => index.search())
-            .then(res => {
-
-                expect(res.nbHits).to.equal(1)
-
-            });
-    });
-
-    it('should empty Algolia index if Firebase path is missing or empty (no timestamp)', function() {
-        CONFIG.schema.emptyPath = {
-            path: `${baseConfig.firebase.uid}/tests/thisPathIsEmpty`,
-            index: `${prefix}_standard_keys`
-        };
+        const index = algolia.initIndex(CONFIG.schema.test.index);
 
         const args = {
             CONFIG,
-            dataset: CONFIG.schema.emptyPath,
-            fb,
-            algolia
-        };
-
-        const index = algolia.initIndex(CONFIG.schema.emptyPath.index);
-
-        return reindex(args)
-            .then(() => index.search())
-            .then(res => {
-
-                expect(res.nbHits).to.equal(0)
-
-            });
-    });
-
-    it('should return ts of last object (no timestamp)', function() {
-        CONFIG.schema.standardKeys = {
-            path: `${baseConfig.firebase.uid}/tests/testData`,
-            index: `${prefix}_standard_keys`
-        };
-
-        const args = {
-            CONFIG,
-            dataset: CONFIG.schema.standardKeys,
+            dataset: CONFIG.schema.test,
             fb,
             algolia
         };
@@ -226,30 +165,34 @@ describe('Full reindexing of a dataset', function() {
         return reindex(args)
             .then(ts => {
 
-                expect(ts).to.equal(now);
+                expect(ts).to.equal(now - 100);
+
+                return index.search();
+            })
+            .then(res => {
+
+                expect(res.nbHits).to.equal(2);
 
             });
     });
 
-    it('should index only recent items, and return timestamp of last object (timestamp provided)', function() {
-        CONFIG.schema.standardKeysTs = {
-            path: `${baseConfig.firebase.uid}/tests/testData`,
-            index: `${prefix}_standard_keys_timestamp`
-        };
 
-        const timestamp = now - 200;
+    it('should complete Algolia index with newer Firebase data', function() {
+
+        const index = algolia.initIndex(CONFIG.schema.test.index);
 
         const args = {
-            ts: timestamp,
+            ts: now - 100,
             CONFIG,
-            dataset: CONFIG.schema.standardKeysTs,
+            dataset: CONFIG.schema.test,
             fb,
             algolia
         };
 
-        const index = algolia.initIndex(CONFIG.schema.standardKeysTs.index);
-
-        return reindex(args)
+        // First add a new item to firebase, then call again addToIndex with ts
+        return fb.child(`${CONFIG.firebase.uid}/tests/testData/defaultKey3`)
+            .set(firebaseFixtures.tests.newTestData.defaultKey3)
+            .then(() => reindex(args))
             .then(ts => {
 
                 expect(ts).to.equal(now);
@@ -258,54 +201,10 @@ describe('Full reindexing of a dataset', function() {
             })
             .then(res => {
 
-                expect(res.nbHits).to.equal(2);
-                expect(res.hits[0])
-                    .to.have.property('modifiedAt')
-                    .that.is.above(timestamp);
-                expect(res.hits[1])
-                    .to.have.property('modifiedAt')
-                    .that.is.above(timestamp);
+                expect(res.nbHits).to.equal(3);
 
             });
     });
 
-    it('should index only recent items, if timestamp provided', function() {
-        CONFIG.schema.standardKeysTs = {
-            path: `${baseConfig.firebase.uid}/tests/testData`,
-            index: `${prefix}_standard_keys_timestamp`
-        };
-
-        const timestamp = now - 200;
-
-        const args = {
-            ts: timestamp,
-            CONFIG,
-            dataset: CONFIG.schema.standardKeysTs,
-            fb,
-            algolia
-        };
-
-        const index = algolia.initIndex(CONFIG.schema.standardKeysTs.index);
-
-        return reindex(args)
-            .then(ts => {
-
-                expect(ts).to.equal(now);
-
-                return index.search();
-            })
-            .then(res => {
-
-                expect(res.nbHits).to.equal(2);
-                expect(res.hits[0])
-                    .to.have.property('modifiedAt')
-                    .that.is.above(timestamp);
-                expect(res.hits[1])
-                    .to.have.property('modifiedAt')
-                    .that.is.above(timestamp);
-
-            });
-    });
 
 });
-

@@ -1,13 +1,13 @@
 import Promise from 'bluebird';
 import Debug from 'debug';
 import prettyjson from 'prettyjson';
-import { pick as _pick, omit as _omit, values as _values } from 'lodash';
+import { maxBy as _maxBy, omit as _omit, pick as _pick, values as _values } from 'lodash';
 
 import indexExists from './index-exists.js';
-import storeLastTimestamp from './store-last-timestamp.js';
+// import storeLastTimestamp from './store-last-timestamp.js';
 
-const info = Debug('info:full-reindex');
-const debug = Debug('full-reindex');
+const info = Debug('info:add-to-index');
+const debug = Debug('add-to-index');
 
 const addToIndex = ({
         clearIndex = false,
@@ -31,7 +31,8 @@ const addToIndex = ({
                 algolia
             })
             .then(indexExists => indexExists && index.clearIndex())
-            .then(res => res && index.waitTask(res.taskID));
+            .then(res => res && index.waitTask(res.taskID))
+            .then(() => null);
     }
 
     if (clearIndex) {
@@ -39,8 +40,6 @@ const addToIndex = ({
         tempIndexName = `${dataset.index}_temp`;
         tempIndex = algolia.initIndex(tempIndexName);
     }
-
-    info(`Fully reindexing ${dataset.path}...`);
 
     for (let key in firebaseObjects) {
         /* istanbul ignore else */
@@ -71,7 +70,7 @@ const addToIndex = ({
     // Add objects to the new index and return the promise
     let promise = indexToModify.saveObjects(objectsToIndex)
         // Wait for the task to actually finish
-        .then(res => indexToModify.waitTask(res.taskID));
+        .then(task => indexToModify.waitTask(task.taskID));
 
     if (clearIndex) {
         promise = promise.then(() => indexExists({
@@ -93,22 +92,23 @@ const addToIndex = ({
                 return algolia.moveIndex(tempIndexName, dataset.index);
             })
             // Wait for the task to actually finish
-            .then(res => tempIndex.waitTask(res.taskID));
+            .then(task => tempIndex.waitTask(task.taskID));
     }
 
-    return promise.then(() => storeLastTimestamp({
-            objects: _values(firebaseObjects),
-            CONFIG,
-            dataset,
-            fb
-        }))
-        .then(ts => {
-            info(`Reindexed ${dataset.index}, number of items: ${objectsToIndex.length}`);
-            return ts;
+    return promise.then(() => {
+            let lastObject = _maxBy(_values(firebaseObjects), CONFIG.timestampField)
+            let ts = lastObject[CONFIG.timestampField] || null;
+
+            return fb.child(`${CONFIG.firebase.uid}/${dataset.index}/ts`)
+                .set(ts)
+                .then(() => ts);
         })
-        .catch(err => {
-            throw new Error(`[ERROR] Error while indexing ${dataset.index}: ${err}`);
+        .then(ts => {
+            info(`Indexed ${objectsToIndex.length} items in ${dataset.index} at ${ts}`);
+            return ts;
         });
+
+
 };
 
 export default addToIndex;
