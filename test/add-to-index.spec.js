@@ -1,16 +1,14 @@
 import { expect } from 'chai';
-import {
-    findIndex as _findIndex,
-    maxBy as _maxBy
-} from 'lodash';
+import { maxBy as _maxBy } from 'lodash';
 
 import initServices from '../src/init-services';
-import fullReindex from '../src/full-reindex';
-import algoliaIndexExists from '../src/algolia-index-exists.js';
+import addToIndex from '../src/add-to-index';
+import indexExists from '../src/index-exists.js';
 
 // Helper function to `expect` functions with args
-// Usage : expectCalling(myFunc).withArgs('badArg').to.throw(/gtfo/)
-const expectCalling = func => ({ withArgs: (...args) => expect(() => func(...args)) });
+// Usage : `expectCalling(myFunc).withArgs('badArg').to.throw(/gtfo/)`
+let expectCalling = func => ({ withArgs: (...args) => expect(() => func(...args)) });
+
 
 // Environment variables must be provided for the tests to work
 
@@ -48,10 +46,10 @@ const algoliaSettings =  {
     ranking: ['typo', 'geo', 'words']
 };
 
-const firebaseFixtures = {
-    tests: {
-        thisPathIsEmpty: {},
-        testData: {
+const firebaseObjects = {
+    // tests: {
+        // thisPathIsEmpty: {},
+        // testData: {
             defaultKey1: {
                 text: 'previously indexed item',
                 customId: 'customKey1',
@@ -70,8 +68,8 @@ const firebaseFixtures = {
                 numberField: 42,
                 modifiedAt: now
             }
-        }
-    }
+        // }
+    // }
 };
 
 
@@ -79,7 +77,7 @@ const firebaseFixtures = {
 // The tests
 //
 
-describe('Full reindexing of a dataset', function() {
+describe('Indexing a group of objects', function() {
     // Take your time, baby (10min/test)
     this.timeout(10 * 60 * 1000);
 
@@ -87,27 +85,27 @@ describe('Full reindexing of a dataset', function() {
 
     before('Initialize services, setup Algolia and Firebase test data', function() {
 
-        // Init services
+        // Init services and test data
         return initServices(baseConfig).then(services => {
             fb = services.fb;
             algolia = services.algolia;
             const index = algolia.initIndex(`${prefix}_standard_keys`);
 
-            // Setup initial test data
             return Promise.all([
                     index.setSettings(algoliaSettings),
                     index.saveObjects(algoliaFixtures)
                 ])
-                .then(results => {
+                .then(tasks => {
                     // Only wait th last item for faster processing
-                    let longestItem = _maxBy(results, 'taskID');
-                    return index.waitTask(longestItem.taskID);
-                })
-                .then(() => fb
-                    .child(`${baseConfig.firebase.uid}`)
-                    .set(firebaseFixtures)
-                );
+                    let lastTask = _maxBy(tasks, 'taskID');
+                    return index.waitTask(lastTask.taskID);
+                });
+                // .then(() => fb
+                //     .child(`${baseConfig.firebase.uid}`)
+                //     .set(firebaseFixtures)
+                // );
         });
+
     });
 
     after('Cleaning up Algolia and Firebase test data', function() {
@@ -131,7 +129,7 @@ describe('Full reindexing of a dataset', function() {
         ];
 
         const firebaseToDelete = [
-            `${baseConfig.firebase.uid}/tests`,
+            // `${baseConfig.firebase.uid}/tests`,
             `${baseConfig.firebase.uid}/${prefix}_standard_keys`,
             `${baseConfig.firebase.uid}/${prefix}_missing_index`,
             `${baseConfig.firebase.uid}/${prefix}_standard_keys_inclusion`,
@@ -145,12 +143,12 @@ describe('Full reindexing of a dataset', function() {
         return Promise.all(
                 indexesToDelete.map(index => algolia.deleteIndex(index))
             )
-            .then(results => {
+            .then(tasks => {
                 // We first need to know at which index of the results is the
                 // greatest taskID, in order to only wait for this one
                 // so the whole process is a lot faster than waiting for all
                 // deletions.
-                let { idx, taskID } = results.reduce((prev, curr, idx) => {
+                let { idx, taskID } = tasks.reduce((prev, curr, idx) => {
                     if (curr.taskID > prev.taskID) {
                         return { idx: idx, taskID: curr.taskID };
                     }
@@ -162,35 +160,42 @@ describe('Full reindexing of a dataset', function() {
             })
             // Remove test data in firebase
             .then(() => Promise.all(
-                    firebaseToDelete.map(path => fb.child(path).remove())
-                ));
+                firebaseToDelete.map(path => fb.child(path).remove())
+            ));
     });
 
-    it('should throw an error if services are missingc', function(done) {
+    it('should throw an error if services are missing', function() {
 
-        fullReindex({ CONFIG, dataset: { path: 'any' }, fb, algolia: null })
-            .catch(err => {
-                expect(err).to.be.instanceof(Error);
-                done();
-            });
+        const args = {
+            firebaseObjects,
+            CONFIG,
+            dataset: { path: 'any' },
+            fb,
+            algolia: null
+        };
+
+        expectCalling(addToIndex)
+            .withArgs(args)
+            .to.throw(Error);
 
     });
 
-    it('should create Algolia index, if missing (no timestamp)', function() {
+    it('should create Algolia index, if missing', function() {
         CONFIG.schema.missingIndex = {
             path: `${baseConfig.firebase.uid}/tests/testData`,
             index: `${prefix}_missing_index`
         };
 
         const args = {
+            firebaseObjects,
             CONFIG,
             dataset: CONFIG.schema.missingIndex,
             fb,
             algolia
         };
 
-        return fullReindex(args)
-            .then(() => algoliaIndexExists({
+        return addToIndex(args)
+            .then(() => indexExists({
                 indexName: CONFIG.schema.missingIndex.index,
                 algolia
             }))
@@ -201,13 +206,14 @@ describe('Full reindexing of a dataset', function() {
             });
     });
 
-    it('should empty Algolia index if Firebase path is missing or empty (no timestamp)', function() {
+    it('should complete Algolia index with additional data', function() {
         CONFIG.schema.emptyPath = {
-            path: `${baseConfig.firebase.uid}/tests/thisPathIsEmpty`,
+            path: `${baseConfig.firebase.uid}/tests/testData`,
             index: `${prefix}_standard_keys`
         };
 
         const args = {
+            firebaseObjects,
             CONFIG,
             dataset: CONFIG.schema.emptyPath,
             fb,
@@ -216,22 +222,25 @@ describe('Full reindexing of a dataset', function() {
 
         const index = algolia.initIndex(CONFIG.schema.emptyPath.index);
 
-        return fullReindex(args)
+        return addToIndex(args)
             .then(() => index.search())
             .then(res => {
 
-                expect(res.nbHits).to.equal(0)
+                expect(res.nbHits).to.equal(4)
 
             });
     });
 
-    it('should sync Algolia with Firebase (standard key, all field, no timestamp)', function() {
+
+    it('with clearIndex option should fully resync Algolia with Firebase (standard key, all field)', function() {
         CONFIG.schema.standardKeys = {
             path: `${baseConfig.firebase.uid}/tests/testData`,
             index: `${prefix}_standard_keys`
         };
 
         const args = {
+            clearIndex: true,
+            firebaseObjects,
             CONFIG,
             dataset: CONFIG.schema.standardKeys,
             fb,
@@ -240,7 +249,7 @@ describe('Full reindexing of a dataset', function() {
 
         const index = algolia.initIndex(CONFIG.schema.standardKeys.index);
 
-        return fullReindex(args)
+        return addToIndex(args)
             .then(() => index.search())
             .then(res => {
 
@@ -253,7 +262,32 @@ describe('Full reindexing of a dataset', function() {
             });
     });
 
-    it('should sync Algolia with Firebase (standard key, field inclusion filter, no timestamp)', function() {
+    it('should empty Algolia index if Firebase path is missing or empty', function() {
+        CONFIG.schema.emptyPath = {
+            path: `${baseConfig.firebase.uid}/tests/thisPathIsEmpty`,
+            index: `${prefix}_standard_keys`
+        };
+
+        const args = {
+            firebaseObjects: null,
+            CONFIG,
+            dataset: CONFIG.schema.emptyPath,
+            fb,
+            algolia
+        };
+
+        const index = algolia.initIndex(CONFIG.schema.emptyPath.index);
+
+        return addToIndex(args)
+            .then(() => index.search())
+            .then(res => {
+
+                expect(res.nbHits).to.equal(0)
+
+            });
+    });
+
+    it('should sync Algolia with Firebase (standard key, field inclusion filter)', function() {
         CONFIG.schema.standardKeysInclusion = {
             path: `${baseConfig.firebase.uid}/tests/testData`,
             index: `${prefix}_standard_keys_inclusion`,
@@ -261,6 +295,7 @@ describe('Full reindexing of a dataset', function() {
         };
 
         const args = {
+            firebaseObjects,
             CONFIG,
             dataset: CONFIG.schema.standardKeysInclusion,
             fb,
@@ -269,7 +304,7 @@ describe('Full reindexing of a dataset', function() {
 
         const index = algolia.initIndex(CONFIG.schema.standardKeysInclusion.index);
 
-        return fullReindex(args)
+        return addToIndex(args)
             .then(() => index.search())
             .then(res => {
 
@@ -287,7 +322,7 @@ describe('Full reindexing of a dataset', function() {
 
     });
 
-    it('should sync Algolia with Firebase (standard key, field exclusion filter, no timestamp)', function() {
+    it('should sync Algolia with Firebase (standard key, field exclusion filter)', function() {
         CONFIG.schema.standardKeysExclusion = {
             path: `${baseConfig.firebase.uid}/tests/testData`,
             index: `${prefix}_standard_keys_exclusion`,
@@ -295,6 +330,7 @@ describe('Full reindexing of a dataset', function() {
         };
 
         const args = {
+            firebaseObjects,
             CONFIG,
             dataset: CONFIG.schema.standardKeysExclusion,
             fb,
@@ -303,7 +339,7 @@ describe('Full reindexing of a dataset', function() {
 
         const index = algolia.initIndex(CONFIG.schema.standardKeysExclusion.index);
 
-        return fullReindex(args)
+        return addToIndex(args)
             .then(() => index.search())
             .then(res => {
 
@@ -321,7 +357,7 @@ describe('Full reindexing of a dataset', function() {
 
     });
 
-    it('should sync Algolia with Firebase (standard key, field exclusion filter, no timestamp)', function() {
+    it('should sync Algolia with Firebase (standard key, field exclusion filter)', function() {
         CONFIG.schema.standardKeysBothclusion = {
             path: `${baseConfig.firebase.uid}/tests/testData`,
             index: `${prefix}_standard_keys_bothclusion`,
@@ -330,6 +366,7 @@ describe('Full reindexing of a dataset', function() {
         };
 
         const args = {
+            firebaseObjects,
             CONFIG,
             dataset: CONFIG.schema.standardKeysBothclusion,
             fb,
@@ -338,7 +375,7 @@ describe('Full reindexing of a dataset', function() {
 
         const index = algolia.initIndex(CONFIG.schema.standardKeysBothclusion.index);
 
-        return fullReindex(args)
+        return addToIndex(args)
             .then(() => index.search())
             .then(res => {
 
@@ -356,7 +393,7 @@ describe('Full reindexing of a dataset', function() {
 
     });
 
-    it('should sync Algolia with Firebase (custom key, all fields, no timestamp)', function() {
+    it('should sync Algolia with Firebase (custom key, all fields)', function() {
         CONFIG.schema.customKeys = {
             path: `${baseConfig.firebase.uid}/tests/testData`,
             index: `${prefix}_custom_keys`,
@@ -364,6 +401,7 @@ describe('Full reindexing of a dataset', function() {
         };
 
         const args = {
+            firebaseObjects,
             CONFIG,
             dataset: CONFIG.schema.customKeys,
             fb,
@@ -372,7 +410,7 @@ describe('Full reindexing of a dataset', function() {
 
         const index = algolia.initIndex(CONFIG.schema.customKeys.index);
 
-        return fullReindex(args)
+        return addToIndex(args)
             .then(() => index.search())
             .then(res => {
 
@@ -384,13 +422,15 @@ describe('Full reindexing of a dataset', function() {
             });
     });
 
-    it('should keep algolia index settings (no timestamp)', function() {
+    it('should keep algolia index settings when clearing index', function() {
         CONFIG.schema.standardKeys = {
             path: `${baseConfig.firebase.uid}/tests/testData`,
             index: `${prefix}_standard_keys`
         };
 
         const args = {
+            clearIndex: true,
+            firebaseObjects,
             CONFIG,
             dataset: CONFIG.schema.standardKeys,
             fb,
@@ -404,7 +444,7 @@ describe('Full reindexing of a dataset', function() {
         return index.getSettings()
             .then(settings => {
                 previousSettings = settings;
-                return fullReindex(args);
+                return addToIndex(args);
             })
             .then(() => index.getSettings())
             .then(settings => {
@@ -414,20 +454,21 @@ describe('Full reindexing of a dataset', function() {
             });
     });
 
-    it('should return ts of last object (no timestamp)', function() {
+    it('should return timestamp of last object', function() {
         CONFIG.schema.standardKeys = {
             path: `${baseConfig.firebase.uid}/tests/testData`,
             index: `${prefix}_standard_keys`
         };
 
         const args = {
+            firebaseObjects,
             CONFIG,
             dataset: CONFIG.schema.standardKeys,
             fb,
             algolia
         };
 
-        return fullReindex(args)
+        return addToIndex(args)
             .then(ts => {
 
                 expect(ts).to.equal(now);
@@ -435,81 +476,81 @@ describe('Full reindexing of a dataset', function() {
             });
     });
 
-    it('should index only recent items, and return timestamp of last object (timestamp provided)', function() {
-        CONFIG.schema.standardKeysTs = {
-            path: `${baseConfig.firebase.uid}/tests/testData`,
-            index: `${prefix}_standard_keys_timestamp`
-        };
+    // it('should index only recent items, and return timestamp of last object (timestamp provided)', function() {
+    //     CONFIG.schema.standardKeysTs = {
+    //         path: `${baseConfig.firebase.uid}/tests/testData`,
+    //         index: `${prefix}_standard_keys_timestamp`
+    //     };
 
-        const timestamp = now - 200;
+    //     const timestamp = now - 200;
 
-        const args = {
-            ts: timestamp,
-            CONFIG,
-            dataset: CONFIG.schema.standardKeysTs,
-            fb,
-            algolia
-        };
+    //     const args = {
+    //         ts: timestamp,
+    //         CONFIG,
+    //         dataset: CONFIG.schema.standardKeysTs,
+    //         fb,
+    //         algolia
+    //     };
 
-        const index = algolia.initIndex(CONFIG.schema.standardKeysTs.index);
+    //     const index = algolia.initIndex(CONFIG.schema.standardKeysTs.index);
 
-        return fullReindex(args)
-            .then(ts => {
+    //     return addToIndex(args)
+    //         .then(ts => {
 
-                expect(ts).to.equal(now);
+    //             expect(ts).to.equal(now);
 
-                return index.search();
-            })
-            .then(res => {
+    //             return index.search();
+    //         })
+    //         .then(res => {
 
-                expect(res.nbHits).to.equal(2);
-                expect(res.hits[0])
-                    .to.have.property('modifiedAt')
-                    .that.is.above(timestamp);
-                expect(res.hits[1])
-                    .to.have.property('modifiedAt')
-                    .that.is.above(timestamp);
+    //             expect(res.nbHits).to.equal(2);
+    //             expect(res.hits[0])
+    //                 .to.have.property('modifiedAt')
+    //                 .that.is.above(timestamp);
+    //             expect(res.hits[1])
+    //                 .to.have.property('modifiedAt')
+    //                 .that.is.above(timestamp);
 
-            });
-    });
+    //         });
+    // });
 
-    it('should index only recent items, if timestamp provided', function() {
-        CONFIG.schema.standardKeysTs = {
-            path: `${baseConfig.firebase.uid}/tests/testData`,
-            index: `${prefix}_standard_keys_timestamp`
-        };
+    // it('should index only recent items, if timestamp provided', function() {
+    //     CONFIG.schema.standardKeysTs = {
+    //         path: `${baseConfig.firebase.uid}/tests/testData`,
+    //         index: `${prefix}_standard_keys_timestamp`
+    //     };
 
-        const timestamp = now - 200;
+    //     const timestamp = now - 200;
 
-        const args = {
-            ts: timestamp,
-            CONFIG,
-            dataset: CONFIG.schema.standardKeysTs,
-            fb,
-            algolia
-        };
+    //     const args = {
+    //         ts: timestamp,
+    //         CONFIG,
+    //         dataset: CONFIG.schema.standardKeysTs,
+    //         fb,
+    //         algolia
+    //     };
 
-        const index = algolia.initIndex(CONFIG.schema.standardKeysTs.index);
+    //     const index = algolia.initIndex(CONFIG.schema.standardKeysTs.index);
 
-        return fullReindex(args)
-            .then(ts => {
+    //     return addToIndex(args)
+    //         .then(ts => {
 
-                expect(ts).to.equal(now);
+    //             expect(ts).to.equal(now);
 
-                return index.search();
-            })
-            .then(res => {
+    //             return index.search();
+    //         })
+    //         .then(res => {
 
-                expect(res.nbHits).to.equal(2);
-                expect(res.hits[0])
-                    .to.have.property('modifiedAt')
-                    .that.is.above(timestamp);
-                expect(res.hits[1])
-                    .to.have.property('modifiedAt')
-                    .that.is.above(timestamp);
+    //             expect(res.nbHits).to.equal(2);
+    //             expect(res.hits[0])
+    //                 .to.have.property('modifiedAt')
+    //                 .that.is.above(timestamp);
+    //             expect(res.hits[1])
+    //                 .to.have.property('modifiedAt')
+    //                 .that.is.above(timestamp);
 
-            });
-    });
+    //         });
+    // });
 
     it('E2E - should store last object timestamp', function() {
         CONFIG.schema.standardKeys = {
@@ -526,7 +567,7 @@ describe('Full reindexing of a dataset', function() {
 
         const index = algolia.initIndex(CONFIG.schema.standardKeys.index);
 
-        return fullReindex(args)
+        return addToIndex(args)
             .then(() => fb.child(
                     `${CONFIG.firebase.uid}/${CONFIG.schema.standardKeys.index}/ts`
                 ).once('value'))
