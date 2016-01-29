@@ -1,16 +1,7 @@
 import { expect } from 'chai';
-import {
-    findIndex as _findIndex,
-    maxBy as _maxBy
-} from 'lodash';
 
 import initServices from '../src/init-services';
-import fullReindex from '../src/full-reindex';
-import algoliaIndexExists from '../src/algolia-index-exists.js';
-
-// Helper function to `expect` functions with args
-// Usage : expectCalling(myFunc).withArgs('badArg').to.throw(/gtfo/)
-const expectCalling = func => ({ withArgs: (...args) => expect(() => func(...args)) });
+import indexExists from '../src/index-exists.js';
 
 // Environment variables must be provided for the tests to work
 
@@ -55,15 +46,14 @@ describe('Checking existence of an Algolia index', function() {
 
     before('Initialize services, setup Algolia test data', function() {
 
-        // Init services
+        // Init services and test data
         return initServices(config).then(services => {
             algolia = services.algolia;
             const index = algolia.initIndex(`${prefix}_test_index`);
 
-            // Setup initial test data
             return index.saveObjects(algoliaFixtures)
-                .then(res => index.waitTask(res.taskID));
-        });
+                .then(task => index.waitTask(task.taskID));
+        })
 
     });
 
@@ -73,13 +63,13 @@ describe('Checking existence of an Algolia index', function() {
 
         // Remove test data
         return algolia.deleteIndex(`${prefix}_test_index`)
-            .then(res => index.waitTask(res.taskID));
+            .then(task => index.waitTask(task.taskID));
 
     });
 
     it('should detect an existing index', function() {
 
-        return algoliaIndexExists({
+        return indexExists({
                 indexName: `${prefix}_test_index`,
                 algolia
             })
@@ -92,7 +82,7 @@ describe('Checking existence of an Algolia index', function() {
 
     it('should detect an non-existing index', function() {
 
-        return algoliaIndexExists({
+        return indexExists({
                 indexName: `${prefix}_test_index_does_not_exists`,
                 algolia
             })
