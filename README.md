@@ -1,7 +1,7 @@
-[![Build Status](https://img.shields.io/travis/webstylestory/algolia-firebase-indexer.svg?style=flat-square)](https://travis-ci.org/webstylestory/algolia-firebase-indexer) [![Coverage Status](https://img.shields.io/coveralls/webstylestory/algolia-firebase-indexer.svg?style=flat-square)](https://coveralls.io/github/webstylestory/algolia-firebase-indexer) [![Dependency Status](https://img.shields.io/david/webstylestory/algolia-firebase-indexer.svg?style=flat-square)](https://david-dm.org/webstylestory/algolia-firebase-indexer) [![devDependency Status](https://img.shields.io/david/dev/webstylestory/algolia-firebase-indexer.svg?style=flat-square)](https://david-dm.org/webstylestory/algolia-firebase-indexer#info=devDependencies) [![Babel stage-2 badge](https://img.shields.io/badge/babel-stage%202-blue.svg?style=flat-square)](https://babeljs.io/docs/plugins/preset-stage-2/) [![License](http://img.shields.io/:license-mit-blue.svg?style=flat-square)](https://raw.githubusercontent.com/webstylestory/algolia-firebase-indexer/master/LICENSE) [![Made by french tech badge](https://img.shields.io/badge/made%20by-french%20%E2%9D%A4%20tech-orange.svg?style=flat-square)](http://webstylestory.com)
+[![Build Status](https://img.shields.io/travis/webstylestory/figolia.svg?style=flat-square)](https://travis-ci.org/webstylestory/figolia) [![Coverage Status](https://img.shields.io/coveralls/webstylestory/figolia.svg?style=flat-square)](https://coveralls.io/github/webstylestory/figolia) [![Dependency Status](https://img.shields.io/david/webstylestory/figolia.svg?style=flat-square)](https://david-dm.org/webstylestory/figolia) [![devDependency Status](https://img.shields.io/david/dev/webstylestory/figolia.svg?style=flat-square)](https://david-dm.org/webstylestory/figolia#info=devDependencies) [![Babel stage-2 badge](https://img.shields.io/badge/babel-stage%202-blue.svg?style=flat-square)](https://babeljs.io/docs/plugins/preset-stage-2/) [![License](http://img.shields.io/:license-mit-blue.svg?style=flat-square)](https://raw.githubusercontent.com/webstylestory/figolia/master/LICENSE) [![Made by french tech badge](https://img.shields.io/badge/made%20by-french%20%E2%9D%A4%20tech-orange.svg?style=flat-square)](http://webstylestory.com)
 
 
-# algolia-firebase-indexer
+# Figolia
 
 ⚡️ Keep your Algolia search indexes in sync with your Firebase datasets!
 
@@ -31,8 +31,8 @@ IMPORTANT: This is an early release, check the issues for the remaining tasks be
 
 ## Install
 
-    git clone https://github.com/webstylestory/algolia-firebase-indexer.git
-    cd algolia-firebase-indexer
+    git clone https://github.com/webstylestory/figolia.git
+    cd figolia
     npm install
 
 ---
@@ -112,7 +112,7 @@ Edit the `config.example.js` file with the data relevant to your setup, and rena
 
 ### Firebase configuration
 
-In order for `algolia-firebase-indexer` to work properly, it has to store 
+In order for `figolia` to work properly, it has to store 
 the last known indexing date in firebase. You can specify the path where you
 want this information stored in the config ([see above](#configuration)).
 
@@ -134,7 +134,7 @@ before using this server efficiently.
 To allow `algolia` user to write in your Firebase `algolia` path, 
 add the following in your Firebase instance security rules :
 
-    // Let algolia-firebase-indexer daemon keep track of what is in sync
+    // Let figolia daemon keep track of what is in sync
     "algolia": {                              
         ".read": "auth.uid == 'algolia'",
         ".write": "auth.uid == 'algolia'",
@@ -145,7 +145,7 @@ add the following in your Firebase instance security rules :
         ".indexOn": "modifiedAt"
       }
     }
-    
+
 ---
 
 ## Known issues
