@@ -139,7 +139,13 @@ add the following in your Firebase instance security rules :
         ".read": "auth.uid == 'algolia'",
         ".write": "auth.uid == 'algolia'",
     }
-
+    // To avoid Firebase warnings running the tests
+    "tests": {
+      "testData": {
+        ".indexOn": "modifiedAt"
+      }
+    }
+    
 ---
 
 ## Known issues
