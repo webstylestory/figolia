@@ -13,6 +13,7 @@ When using Firebase as a web or mobile app backend, Algolia search-as-a-service 
   * [Configuration](#configuration)
       * [Firebase configuration](#firebase-configuration)
       * [Reindexing, incremental indexing](#reindexing-incremental-indexing)
+  * [Known Issues](#known-issues)
   * [Developers](#developers)
       * [Logging & Debugging](#logging--debugging)
       * [testing](#testing)
@@ -138,6 +139,15 @@ add the following in your Firebase instance security rules :
         ".read": "auth.uid == 'algolia'",
         ".write": "auth.uid == 'algolia'",
     }
+
+---
+
+## Known issues
+
+  * [#15](#15) If relaunching indexing after a previous one, with timestamp
+    stored in Firebase, removed items since then will not be removed from index.
+    Workaround is to delete timestamp in `algolia/index` backend in Firebase to 
+    force a full reindex.
 
 ---
 
