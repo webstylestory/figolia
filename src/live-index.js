@@ -2,7 +2,7 @@ import addToIndex from './add-to-index';
 import removeFromIndex from './remove-from-index';
 import Debug from './debug';
 
-const info = Debug('info:live-index');
+const info = Debug('figolia:info:live-index');
 
 //
 //  `liveIndex` takes a dataset configuration object in parameters and

@@ -1,7 +1,7 @@
 import Debug from './debug';
 
-const info = Debug('info:remove-from-index');
-const debug = Debug('remove-from-index');
+const info = Debug('figolia:info:remove-from-index');
+const debug = Debug('figolia:remove-from-index');
 
 //
 // Delete an object from the index based on firebase snapshot

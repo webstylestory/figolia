@@ -2,7 +2,7 @@ import Debug from './debug';
 
 import addToIndex from './add-to-index';
 
-const info = Debug('info:reindex');
+const info = Debug('figolia:info:reindex');
 
 //
 //  `fullReindex` takes a dataset configuration object in parameters and

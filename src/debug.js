@@ -2,9 +2,9 @@ import Debug from 'debug';
 
 /* istanbul ignore if */
 if (!Debug.enabled('quiet')) {
-    // Note: this must be called before any call to `Debug('info')`, hence
+    // Note: this must be called before any call to `Debug('figolia:info')`, hence
     // the need to have this custom file to call in other source files
-    Debug.enable('info*');
+    Debug.enable('figolia:info*');
 }
 
 export default Debug;

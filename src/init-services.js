@@ -5,7 +5,7 @@ import algoliasearch from 'algoliasearch';
 
 import Debug from './debug';
 
-const info = Debug('info:init');
+const info = Debug('figolia:info:init');
 
 //
 // initServices initialize both Algolia and Firebase services

@@ -9,8 +9,8 @@ import Promise from 'bluebird';
 
 import indexExists from './index-exists.js';
 
-const info = Debug('info:add-to-index');
-const debug = Debug('add-to-index');
+const info = Debug('figolia:info:add-to-index');
+const debug = Debug('figolia:add-to-index');
 
 //
 // addToIndex will push items (firebaseObjects: Array) in the Algolia index

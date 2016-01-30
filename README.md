@@ -161,16 +161,13 @@ add the following in your Firebase instance security rules :
 
 ### Logging & debugging
 
-If you need more verbose information in the console, you can use the following command line:
+By default, basic info is output in the console. Should you need more debug information, you can use the following command line:
 
-    DEBUG=*,-babel*,-firebase*,-algolia* node server.js
+    DEBUG=figolia* npm start
 
-This will enable all the main app debug output, without the  verbose debug info 
-from babel, algolia and firebase.
+...or go full throttle including algolia and firebase libs debug info :
 
-To shutdown all console output (quiet mode), you can use the following :
-
-    DEBUG=quiet node server.js
+    DEBUG=* npm start
 
 ### Testing
 

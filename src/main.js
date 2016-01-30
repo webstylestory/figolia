@@ -7,7 +7,7 @@ import reindex from './reindex';
 import liveIndex from './live-index';
 import getLastTimestamp from './get-last-timestamp';
 
-const info = Debug('info:main');
+const info = Debug('figolia:info:main');
 const debug = Debug('main');
 
 // Main server

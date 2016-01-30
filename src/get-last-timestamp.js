@@ -2,7 +2,7 @@ import Promise from 'bluebird';
 
 import Debug from './debug';
 
-const info = Debug('info:get-last-timestamp');
+const info = Debug('figolia:info:get-last-timestamp');
 
 //
 // getLastTimetamp will get the last indexing timestamp from Firebase
