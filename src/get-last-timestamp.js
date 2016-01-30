@@ -1,11 +1,16 @@
 import Promise from 'bluebird';
 
+import Debug from './debug';
+
+const info = Debug('info:get-last-timestamp');
+
 //
 // getLastTimetamp will get the last indexing timestamp from Firebase
 //
 const getLastTimestamp = ({ CONFIG, dataset, fb }) => {
 
     if (!CONFIG.timestampField || !CONFIG.firebase.uid || !dataset.index) {
+        info(`Unable to fetch timestamp for index ${dataset.index}`);
         return Promise.resolve(null);
     }
 
@@ -13,7 +18,13 @@ const getLastTimestamp = ({ CONFIG, dataset, fb }) => {
         .child(`${CONFIG.firebase.uid}/${dataset.index}/ts`)
         .once('value')
         .then(fbRef => {
-            return fbRef && fbRef.val() || null;
+            const ts = fbRef.val();
+            info(
+                fbRef.val() ?
+                `Timestamp for index ${dataset.index}: ${ts}` :
+                `Timestamp not found for index ${dataset.index}`
+            )
+            return ts;
         });
 
 };
