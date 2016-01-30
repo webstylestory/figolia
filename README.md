@@ -1,14 +1,16 @@
-[![Build Status](https://img.shields.io/travis/webstylestory/figolia.svg?style=flat-square)](https://travis-ci.org/webstylestory/figolia) [![Coverage Status](https://img.shields.io/coveralls/webstylestory/figolia.svg?style=flat-square)](https://coveralls.io/github/webstylestory/figolia) [![Dependency Status](https://img.shields.io/david/webstylestory/figolia.svg?style=flat-square)](https://david-dm.org/webstylestory/figolia) [![devDependency Status](https://img.shields.io/david/dev/webstylestory/figolia.svg?style=flat-square)](https://david-dm.org/webstylestory/figolia#info=devDependencies) [![Babel stage-2 badge](https://img.shields.io/badge/babel-stage%202-blue.svg?style=flat-square)](https://babeljs.io/docs/plugins/preset-stage-2/) [![License](http://img.shields.io/:license-mit-blue.svg?style=flat-square)](https://raw.githubusercontent.com/webstylestory/figolia/master/LICENSE) [![Made by french tech badge](https://img.shields.io/badge/made%20by-french%20%E2%9D%A4%20tech-orange.svg?style=flat-square)](http://webstylestory.com)
+[![Build Status](https://img.shields.io/travis/webstylestory/figolia.svg?style=flat-square)](https://travis-ci.org/webstylestory/figolia) [![Coverage Status](https://img.shields.io/coveralls/webstylestory/figolia.svg?style=flat-square)](https://coveralls.io/github/webstylestory/figolia) [!(https://img.shields.io/codeclimate/github/kabisaict/flow.svg)](https://codeclimate.com/github/webstylestory/figolia) [![Dependency Status](https://img.shields.io/david/webstylestory/figolia.svg?style=flat-square)](https://david-dm.org/webstylestory/figolia) [![devDependency Status](https://img.shields.io/david/dev/webstylestory/figolia.svg?style=flat-square)](https://david-dm.org/webstylestory/figolia#info=devDependencies) [![Babel stage-2 badge](https://img.shields.io/badge/babel-stage%202-blue.svg?style=flat-square)](https://babeljs.io/docs/plugins/preset-stage-2/) [![License](http://img.shields.io/:license-mit-blue.svg?style=flat-square)](https://raw.githubusercontent.com/webstylestory/figolia/master/LICENSE) [![Made by french tech badge](https://img.shields.io/badge/made%20by-french%20%E2%9D%A4%20tech-orange.svg?style=flat-square)](http://webstylestory.com)
 
 
 # Figolia
 
 ⚡️ Keep your Algolia search indexes in sync with your Firebase datasets!
 
-When using Firebase as a web or mobile app backend, Algolia search-as-a-service is a really nice addition, considering the poor search and querying capabilities of Firebase. This server is the perfect companion to make their synchronization happen in no time.
+When using [Firebase](http://firebase.com) as a web or mobile backend, [Algolia](http://algolia.com) search-as-a-service is a really nice addition, considering the poor search and querying capabilities of Firebase. Figolia is the perfect companion to make their synchronization happen in no time.
 
-*(Codebase inspired by Scott Smith's work in this [blog post](http://scottksmith.com/blog/2014/12/09/algolia-real-time-search-with-firebase/)*
+*(Codebase inspired by Scott Smith's work in this [blog post](http://scottksmith.com/blog/2014/12/09/algolia-real-time-search-with-firebase/))*
 
+  * [Features](#features)
+  * [Install](#install)
   * [Usage](#usage)
   * [Configuration](#configuration)
       * [Firebase configuration](#firebase-configuration)
@@ -23,9 +25,12 @@ When using Firebase as a web or mobile app backend, Algolia search-as-a-service 
 
 ---
 
-## WORK IN PROGRESS
+## Features
 
-IMPORTANT: This is an early release, check the issues for the remaining tasks before it can be use seriously
+  * sync multiple Firebase references
+  * all CRUD Firebase operations reflected in Algolia 
+  * restarts from last indexing timestamp the next time it's launched
+  * TODO - throttle indexing to limit Algolia API calls
 
 ---
 
@@ -132,7 +137,7 @@ to track the last modified time of each of your objects, you'll have to do so
 before using this server efficiently. 
 
 To allow `algolia` user to write in your Firebase `algolia` path, 
-add the following in your Firebase instance security rules :
+add the following in your Firebase instance security rules:
 
     // Let figolia daemon keep track of what is in sync
     "algolia": {                              
