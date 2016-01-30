@@ -10,30 +10,26 @@ const info = Debug('info:init');
 //
 // initServices initialize both Algolia and Firebase services
 //
-// @return Promise
+// @return Promise returning { fb, algolia } services object
 //
 function initServices(CONFIG) {
 
-    //
     // Connect to algolia
-    //
     const { applicationId, apiKey } = CONFIG.algolia;
     const algolia = algoliasearch(applicationId, apiKey);
 
     info(`Connected to Algolia appId ${applicationId}`);
 
-    //
     // Connect to Firebase
-    //
     Firebase.enableLogging(Debug.enabled('firebase'), Debug('firebase'));
     const fbInstance = `https://${CONFIG.firebase.instance}.firebaseio.com`;
     const fb = new Firebase(fbInstance);
 
+    // Authenticate Firebase connection with credentials, if available
     if (!!CONFIG.firebase.secret && !!CONFIG.firebase.uid) {
         let tokenGenerator = new FirebaseTokenGenerator(CONFIG.firebase.secret);
         let token = tokenGenerator.createToken({ uid: CONFIG.firebase.uid });
 
-        // Authenticate Firebase connection with provided secret / uid
         return fb.authWithCustomToken(token)
             .then(() => {
                 info(

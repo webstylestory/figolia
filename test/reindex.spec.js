@@ -5,10 +5,6 @@ import prettyjson from 'prettyjson';
 import initServices from '../src/init-services';
 import reindex from '../src/reindex.js';
 
-// Helper function to `expect` functions with args
-// Usage : `expectCalling(myFunc).withArgs('badArg').to.throw(/gtfo/)`
-let expectCalling = func => ({ withArgs: (...args) => expect(() => func(...args)) });
-
 // Environment variables must be provided for the tests to work
 
 const now = Date.now();

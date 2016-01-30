@@ -8,7 +8,7 @@ const info = Debug('info:live-index');
 //  `liveIndex` takes a dataset configuration object in parameters and
 //  listen for CRUD Firebase operation to update Algolia index accordingly
 //
-//  @return Promise
+//  @return firebase reference if it correctly creates the 3 listeners, null otherwise
 //
 const liveIndex = ({ ts, CONFIG, dataset, fb, algolia }) => {
 
@@ -50,6 +50,8 @@ const liveIndex = ({ ts, CONFIG, dataset, fb, algolia }) => {
     fb.child(dataset.path).on('child_removed', fbRef =>
         removeFromIndex({ fbRef, CONFIG, dataset, fb, algolia })
     );
+
+    return fb;
 };
 
 export default liveIndex;

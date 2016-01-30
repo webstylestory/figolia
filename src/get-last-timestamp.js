@@ -7,6 +7,8 @@ const info = Debug('info:get-last-timestamp');
 //
 // getLastTimetamp will get the last indexing timestamp from Firebase
 //
+// @return Promise returning timestamp or null
+//
 const getLastTimestamp = ({ CONFIG, dataset, fb }) => {
 
     if (!CONFIG.timestampField || !CONFIG.firebase.uid || !dataset.index) {
@@ -14,8 +16,7 @@ const getLastTimestamp = ({ CONFIG, dataset, fb }) => {
         return Promise.resolve(null);
     }
 
-    return fb
-        .child(`${CONFIG.firebase.uid}/${dataset.index}/ts`)
+    return fb.child(`${CONFIG.firebase.uid}/${dataset.index}/ts`)
         .once('value')
         .then(fbRef => {
             const ts = fbRef.val();

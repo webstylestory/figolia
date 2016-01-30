@@ -20,12 +20,16 @@ function main(CONFIG) {
     debug(prettyjson.render(CONFIG));
 
     return initServices(CONFIG).then(services =>
+        // For each configured dataset, process indexing
         Promise.all(Object.keys(CONFIG.schema).map(key => {
 
             const dataset = CONFIG.schema[key];
 
+            // First try to get last indexing time for this dataset
             return getLastTimestamp({ CONFIG, dataset, ...services })
+                // Then, reindex all objects from this timestamp, or everything
                 .then(ts => reindex({ ts, CONFIG, dataset, ...services }))
+                // Then, setup CRUD listeners to continue indexing future events
                 .then(ts => liveIndex({ CONFIG, dataset, ...services }));
         }))
     );

@@ -7,6 +7,8 @@ const debug = Debug('remove-from-index');
 // Delete an object from the index based on firebase snapshot
 // This should only be used as a 'child_removed' firebase callback
 //
+// @return Promise
+//
 const deleteFromIndex = ({ fbRef, CONFIG, dataset, fb, algolia }) => {
 
   const objectID = dataset.key ? fbRef.val()[dataset.key] : fbRef.key();
