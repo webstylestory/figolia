@@ -1,8 +1,11 @@
 import prettyjson from 'prettyjson';
+import Promise from 'bluebird';
 
 import Debug from './debug';
 import initServices from './init-services';
-import fullReindex from './full-reindex';
+import reindex from './reindex';
+import liveIndex from './live-index';
+import getLastTimestamp from './get-last-timestamp';
 
 const info = Debug('info:main');
 const debug = Debug('main');
@@ -16,29 +19,17 @@ function main(CONFIG) {
     debug('Current config: ');
     debug(prettyjson.render(CONFIG));
 
-    initServices(CONFIG).then(({ fb, agolia }) => {
+    return initServices(CONFIG).then(services =>
+        Promise.all(Object.keys(CONFIG.schema).map(key => {
 
-        for (let key in CONFIG.schema) {
+            const dataset = CONFIG.schema[key];
 
-            let dataset = CONFIG.schema[key];
+            return getLastTimestamp({ CONFIG, dataset, ...services })
+                .then(ts => reindex({ ts, CONFIG, dataset, ...services }))
+                .then(ts => liveIndex({ CONFIG, dataset, ...services }));
+        }))
+    );
 
-            // let promise = getLastIndexingTime(dataset);
-
-            // if (!promise) {
-            //     promise = fullReindex(dataset);
-            // }
-
-            // promise
-            //     .then(listenFirebaseForIndexing)
-            //     .catch(err => console.error(err));
-
-            return fullReindex({ CONFIG, dataset, fb, algolia });
-        }
-    })
-
-    .catch(err => {
-        throw new Error(`[ERROR] in main loop: ${err}`);
-    });
 }
 
 export default main;

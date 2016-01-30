@@ -1,9 +1,18 @@
+import Promise from 'bluebird';
 import { expect } from 'chai';
 import { maxBy as _maxBy } from 'lodash';
 import prettyjson from 'prettyjson';
 
 import initServices from '../src/init-services';
-import main from '../src/main.js';
+import reindex from '../src/reindex.js';
+import liveIndex from '../src/live-index.js';
+
+// Helper function that returns a Promise which resolves ater a delay
+const waitFor = seconds => {
+    let deferred = Promise.defer();
+    setTimeout(deferred.resolve.bind(deferred), seconds * 1000);
+    return deferred.promise;
+}
 
 // Environment variables must be provided for the tests to work
 
@@ -74,7 +83,7 @@ const firebaseFixtures = {
 // The tests
 //
 
-describe('Calling main program', function() {
+describe('Live indexing of a Firebase dataset to Algolia', function() {
     // Take your time, baby (10min/test)
     this.timeout(10 * 60 * 1000);
 
@@ -93,7 +102,24 @@ describe('Calling main program', function() {
                 .then(() => fb
                     .child(`${CONFIG.firebase.uid}`)
                     .set(firebaseFixtures)
-                );
+                )
+                // Index first set of data
+                .then(() => reindex({
+                    CONFIG,
+                    dataset: CONFIG.schema.test,
+                    fb,
+                    algolia
+                }))
+                // Start live indexing
+                .then(() => {
+                    liveIndex({
+                        ts: now - 100,
+                        CONFIG,
+                        dataset: CONFIG.schema.test,
+                        fb,
+                        algolia
+                    });
+                });
         });
 
     });
@@ -129,85 +155,31 @@ describe('Calling main program', function() {
                 let index = algolia.initIndex(indexesToDelete[idx]);
                 return index.waitTask(taskID);
             })
+            // Stop listening to Firebase changes
+            .then(() => {
+                fb.child(CONFIG.schema.test.path).off();
+            })
             // Remove test data in firebase
             .then(() => Promise.all(
                 firebaseToDelete.map(path => fb.child(path).remove())
             ));
+
     });
 
-    it('should fully sync Firebase to empty index, without timestamp field', function() {
+    it('should return null if no timestamp provided', function() {
 
-        let simpleConfig = {
-            ...CONFIG,
-            timestampField: null
-        };
+        expect(liveIndex({ ts: null, dataset: { path: 'test' } })).to.be.null;
+
+    });
+
+    it('should add Firebase additional data to index and update timestamp', function() {
 
         const index = algolia.initIndex(CONFIG.schema.test.index);
 
         return fb.child(`${CONFIG.firebase.uid}/tests/testData/defaultKey3`)
             .set(firebaseFixtures.tests.newTestData.defaultKey3)
-            .then(() => main(simpleConfig))
-            .then(() => index.search())
-            .then(res => {
-
-                expect(res.nbHits).to.equal(3);
-
-            });
-
-    })
-
-    it('should clear and resync Firebase to existing index, without timestamp field', function() {
-
-        let simpleConfig = {
-            ...CONFIG,
-            timestampField: null
-        };
-
-        const index = algolia.initIndex(CONFIG.schema.test.index);
-
-        return fb.child(`${CONFIG.firebase.uid}/tests/testData/defaultKey3`)
-            .remove()
-            .then(() => main(simpleConfig))
-            .then(() => index.search())
-            .then(res => {
-
-                expect(res.nbHits).to.equal(2);
-
-            });
-
-    })
-
-    it('with timestampField, should sync Algolia index with Firebase data and store timestamp', function() {
-
-        const index = algolia.initIndex(CONFIG.schema.test.index);
-
-        return main(CONFIG)
-            .then(() => fb
-                .child(`${CONFIG.firebase.uid}/${prefix}_standard_keys/ts`)
-                .once('value')
-            )
-            .then(fbRef => {
-
-                expect(fbRef.val()).to.equal(now - 100);
-
-                return index.search();
-            })
-            .then(res => {
-
-                expect(res.nbHits).to.equal(2);
-
-            });
-    });
-
-    it('with tiestampField, should add Firebase additional data to index', function() {
-
-        const index = algolia.initIndex(CONFIG.schema.test.index);
-
-        return fb.child(`${CONFIG.firebase.uid}/tests/testData/defaultKey3`)
-            .set(firebaseFixtures.tests.newTestData.defaultKey3)
-            .then(() => main(CONFIG))
-            .then(() => fb
-                .child(`${CONFIG.firebase.uid}/${prefix}_standard_keys/ts`)
+            .then(() => waitFor(15))
+            .then(() => fb.child(`${CONFIG.firebase.uid}/${prefix}_standard_keys/ts`)
                 .once('value')
             )
             .then(fbRef => {
@@ -222,5 +194,21 @@ describe('Calling main program', function() {
 
             });
     });
+
+    it('should delete removed Firebase data from index', function() {
+
+        const index = algolia.initIndex(CONFIG.schema.test.index);
+
+        return fb.child(`${CONFIG.firebase.uid}/tests/testData/defaultKey2`)
+            .remove()
+            .then(() => waitFor(15))
+            .then(() => index.search())
+            .then(res => {
+
+                expect(res.nbHits).to.equal(2);
+
+            });
+    });
+
 
 });
