@@ -13,5 +13,8 @@ var CONFIG = require(configFile).default;
 
 // Launch server with current config
 var main = require('./src/main').default;
-main(CONFIG);
+
+main(CONFIG).catch(err => {
+    throw new Error(`[ERROR] ${err}`);
+});
 
