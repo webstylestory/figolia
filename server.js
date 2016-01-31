@@ -1,7 +1,9 @@
 /*eslint-disable */
 
 // Enable loading ES2016 files with babel
-require('babel-register');
+require('babel-register')({
+    "presets": ["es2015", "stage-2"]
+});
 var program = require('commander');
 var packageJson = require('./package.json');
 

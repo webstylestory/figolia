@@ -3,13 +3,26 @@
 
 # Figolia
 
+
 ⚡️  Keep your Algolia search indexes in sync with your Firebase datasets!
 
 When using [Firebase](http://firebase.com) as a web or mobile backend, [Algolia](http://algolia.com) search-as-a-service is a really nice addition, considering the poor search and querying capabilities of Firebase. Figolia is the perfect companion to make their synchronization happen in no time.
 
 *(Codebase inspired by Scott Smith's work in this [blog post](http://scottksmith.com/blog/2014/12/09/algolia-real-time-search-with-firebase/))*
 
-  * [Features](#features)
+
+## Features
+
+
+  * sync multiple Firebase references
+  * all CRUD Firebase operations reflected in Algolia 
+  * restarts from last indexing timestamp the next time it's launched
+  * TODO - throttle indexing to limit Algolia API calls
+
+
+---
+
+
   * [Install](#install)
   * [Usage](#usage)
   * [Configuration](#configuration)
@@ -24,16 +37,8 @@ When using [Firebase](http://firebase.com) as a web or mobile backend, [Algolia]
   * [License](#license)
 
 
-
-## Features
-
-  * sync multiple Firebase references
-  * all CRUD Firebase operations reflected in Algolia 
-  * restarts from last indexing timestamp the next time it's launched
-  * TODO - throttle indexing to limit Algolia API calls
-
-
 ## Install
+
 
     npm install -g figolia
 
@@ -67,6 +72,7 @@ Important : the server needs a config file before it can runs, at least to provi
 
 
 ## Configuration
+
 
 Edit the `config.example.js` file with the data relevant to your setup, and rename it to `config.js` before running the server.
 
@@ -133,7 +139,9 @@ Edit the `config.example.js` file with the data relevant to your setup, and rena
 
 *Note for production use: you can also uncomment production-specific settings below the main, in the same file, to deal with multi environment setup*
 
+
 ### Firebase configuration
+
 
 In order for `figolia` to work properly, it has to store 
 the last known indexing date in firebase. You can specify the path where you
@@ -141,7 +149,9 @@ want this information stored in the config ([see above](#configuration)).
 
 This path will also be used to store data fixtures [if you run the tests](#testing).
 
+
 ### Reindexing, incremental indexing
+
 
 This daemon supports a simple mode where every indexed object in Algolia is dropped at runtime, and then re-indexed from the current Firebase connection. **Any previously indexed data will be lost.**
 
@@ -172,11 +182,13 @@ add the following in your Firebase instance security rules:
 
 ## Release notes
 
+ * 0.1.2 - Fix global usage issue with broken babel presets
  * 0.1.1 - Fix commandline issue with missing npm package
  * 0.1.0 - Initial release
 
 
 ## Known issues
+
 
   * [#15](#15) If relaunching indexing after a previous one, with timestamp
     stored in Firebase, removed items since then will not be removed from index.
@@ -184,9 +196,12 @@ add the following in your Firebase instance security rules:
     force a full reindex.
 
 
+
 ## Developers
 
+
 ### Logging & debugging
+
 
 By default, basic info is output in the console. Should you need more debug information, you can use the following command line:
 
@@ -196,7 +211,9 @@ By default, basic info is output in the console. Should you need more debug info
 
     DEBUG=* npm start
 
+
 ### Testing
+
 
 Because Firebase and Algolia accounts are needed for this app, you have to provide
 all the necessary credentials as environment variables while running `npm test`:
@@ -215,7 +232,9 @@ up your testing of a specific file by appending its name to the command line:
 cannot, because they have to write fixture data, hence the need for a full Firebase
 configuration, including `secret` and `uid` ([see above](#firebase-configuration))*
 
+
 ### Contribute
+
 
 PRs are more than welcome! Your PR should not break current usage
 and pass all tests. Even better if you write the tests for the added code, and 
@@ -225,6 +244,7 @@ I will have a look at anything you will have the time to propose.
 
 
 ## License
+
 
 MIT © 2016 WEB STYLE STORY SARL
 
