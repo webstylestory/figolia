@@ -24,13 +24,36 @@ function main(CONFIG) {
         Promise.all(Object.keys(CONFIG.schema).map(key => {
 
             const dataset = CONFIG.schema[key];
+            info(`Starting indexing ${dataset.path}`);
 
             // First try to get last indexing time for this dataset
-            return getLastTimestamp({ CONFIG, dataset, ...services })
-                // Then, reindex all objects from this timestamp, or everything
+            // except if user expicitely ask for a full reset
+            let promise = CONFIG.reset ?
+                Promise.resolve() :
+                getLastTimestamp({ CONFIG, dataset, ...services });
+
+            // Then, reindex all objects from this timestamp, or everything
+            promise = promise
                 .then(ts => reindex({ ts, CONFIG, dataset, ...services }))
-                // Then, setup CRUD listeners to continue indexing future events
+                .then(ts => {
+                    info(`Done indexing ${dataset.path}`);
+                    return ts;
+                });
+
+            // If no live indexing is demanded, stop there
+            if (!CONFIG.liveIndex) {
+                return promise;
+            }
+
+            // Setup CRUD listeners to continue indexing future events
+            return promise
+                .then(ts => {
+                    info(`Starting live indexing ${dataset.path}...`);
+                    info('(The server will now never stop by itself, please hit CTRL-C to force exit)');
+                    return ts;
+                })
                 .then(ts => liveIndex({ CONFIG, dataset, ...services }));
+
         }))
     );
 

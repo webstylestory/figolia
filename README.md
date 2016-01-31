@@ -36,6 +36,10 @@ When using [Firebase](http://firebase.com) as a web or mobile backend, [Algolia]
 
 ## Install
 
+    npm install figolia
+
+Or, download from github repository :
+
     git clone https://github.com/webstylestory/figolia.git
     cd figolia
     npm install
@@ -44,7 +48,17 @@ When using [Firebase](http://firebase.com) as a web or mobile backend, [Algolia]
 
 ## Usage
 
-    npm start
+    $ figolia --help
+
+      Usage: figolia [options]
+
+      Options:
+
+        -h, --help           output usage information
+        -V, --version        output the version number
+        -c, --config [path]  Specify configuration (default to ~/.figolia.conf.js)
+        -l, --live-index     Keep server running to live index Firebase operations (otherwise exit after indexing)
+        -r, --reset          Force index reset (clear & full reindex)
 
 For production setup, I strongly encourage the use of a good process manager 
 like [PM2](https://github.com/Unitech/pm2)
@@ -74,6 +88,11 @@ Edit the `config.example.js` file with the data relevant to your setup, and rena
             // *Admin* API Key
             apiKey: 'TO_BE_CHANGED'
         },
+        // Fully reindex all datasets. Can be overiden on the commandline.
+        reset: false,
+        // Stay running and live-index all firebase operations.
+        // Can be overriden on the commandline.
+        liveIndex: false,
         // Optional, this field will be checked against last
         // run date to see if reindexing is necessary.
         // Field type must be UNIX timestamp (example Javascript Date.now()).
@@ -150,6 +169,12 @@ add the following in your Firebase instance security rules:
         ".indexOn": "modifiedAt"
       }
     }
+
+---
+
+## Release notes
+
+ * 0.1.0 - Initial release
 
 ---
 

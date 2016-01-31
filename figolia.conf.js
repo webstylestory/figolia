@@ -26,13 +26,18 @@ let CONFIG = {
         // *Admin* API Key
         apiKey: process.env.ALGOLIA_API_KEY || 'TO_BE_CHANGED'
     },
-    // Optional, this field will be checked against last
+    // Fully reindex all datasets. Can be overiden on the commandline.
+    reset: false,
+    // Stay running and live-index all firebase operations.
+    // Can be overriden on the commandline.
+    liveIndex: false,
+    // Optional but strongly reccomended, this field will be checked against last
     // run date to see if reindexing is necessary.
-    // Field type must be UNIX timestamp (example Javascript Date.now()).
+    // Field content must be UNIX timestamp (example Date.now() output).
     // WARNING: Without this field being correctly configured,
     // everything is re-indexed at rerun.
     //
-//  timestampField: 'modifiedAt',
+    timestampField: 'modifiedAt',
     //
     // Firebase datasets to index in Algolia
     schema: {

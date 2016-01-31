@@ -223,4 +223,26 @@ describe('Calling main program', function() {
             });
     });
 
+    it('should clear and resync Firebase to existing index, with reset switch, and launch live index with liveIndex switch', function() {
+
+        let resetConfig = {
+            ...CONFIG,
+            reset: true,
+            liveIndex: true
+        };
+
+        const index = algolia.initIndex(CONFIG.schema.test.index);
+
+        return fb.child(`${CONFIG.firebase.uid}/tests/testData/defaultKey3`)
+            .remove()
+            .then(() => main(resetConfig))
+            .then(() => index.search())
+            .then(res => {
+
+                expect(res.nbHits).to.equal(2);
+
+            });
+
+    });
+
 });
