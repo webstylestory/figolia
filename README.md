@@ -182,6 +182,7 @@ add the following in your Firebase instance security rules:
 
 ## Release notes
 
+ * 0.1.3 - Return of the .babelrc
  * 0.1.2 - Fix global usage issue with broken babel presets
  * 0.1.1 - Fix commandline issue with missing npm package
  * 0.1.0 - Initial release
