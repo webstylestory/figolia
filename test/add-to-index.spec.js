@@ -42,9 +42,9 @@ const algoliaFixtures = [
     }
 ];
 
-const algoliaSettings =  {
-    ranking: ['typo', 'geo', 'words']
-};
+// const algoliaSettings =  {
+//     ranking: ['typo', 'geo', 'words']
+// };
 
 const firebaseObjects = {
     // tests: {
@@ -91,19 +91,20 @@ describe('Indexing a group of objects', function() {
             algolia = services.algolia;
             const index = algolia.initIndex(`${prefix}_standard_keys`);
 
-            return Promise.all([
-                    index.setSettings(algoliaSettings),
-                    index.saveObjects(algoliaFixtures)
-                ])
-                .then(tasks => {
-                    // Only wait th last item for faster processing
-                    let lastTask = _maxBy(tasks, 'taskID');
-                    return index.waitTask(lastTask.taskID);
-                });
-                // .then(() => fb
-                //     .child(`${baseConfig.firebase.uid}`)
-                //     .set(firebaseFixtures)
-                // );
+            return index.saveObjects(algoliaFixtures)
+                .then(task => index.waitTask(task.taskID));
+
+            // return Promise.all([
+            //         index.setSettings(algoliaSettings),
+            //         index.saveObjects(algoliaFixtures)
+            //     ])
+            //     .then(tasks => {
+            //         // Only wait th last item for faster processing
+            //         let lastTask = _maxBy(tasks, 'taskID');
+            //         return index.waitTask(lastTask.taskID);
+            //     });
+
+
         });
 
     });
@@ -422,37 +423,37 @@ describe('Indexing a group of objects', function() {
             });
     });
 
-    it('should keep algolia index settings when clearing index', function() {
-        CONFIG.schema.standardKeys = {
-            path: `${baseConfig.firebase.uid}/tests/testData`,
-            index: `${prefix}_standard_keys`
-        };
+    // it('should keep algolia index settings when clearing index', function() {
+    //     CONFIG.schema.standardKeys = {
+    //         path: `${baseConfig.firebase.uid}/tests/testData`,
+    //         index: `${prefix}_standard_keys`
+    //     };
 
-        const args = {
-            clearIndex: true,
-            firebaseObjects,
-            CONFIG,
-            dataset: CONFIG.schema.standardKeys,
-            fb,
-            algolia
-        };
+    //     const args = {
+    //         clearIndex: true,
+    //         firebaseObjects,
+    //         CONFIG,
+    //         dataset: CONFIG.schema.standardKeys,
+    //         fb,
+    //         algolia
+    //     };
 
-        let index = algolia.initIndex(CONFIG.schema.standardKeys.index);
+    //     let index = algolia.initIndex(CONFIG.schema.standardKeys.index);
 
-        let previousSettings;
+    //     let previousSettings;
 
-        return index.getSettings()
-            .then(settings => {
-                previousSettings = settings;
-                return addToIndex(args);
-            })
-            .then(() => index.getSettings())
-            .then(settings => {
+    //     return index.getSettings()
+    //         .then(settings => {
+    //             previousSettings = settings;
+    //             return addToIndex(args);
+    //         })
+    //         .then(() => index.getSettings())
+    //         .then(settings => {
 
-                expect(settings).to.deep.equal(previousSettings);
+    //             expect(settings).to.deep.equal(previousSettings);
 
-            });
-    });
+    //         });
+    // });
 
     it('should return timestamp of last object', function() {
         CONFIG.schema.standardKeys = {

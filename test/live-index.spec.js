@@ -31,6 +31,7 @@ const CONFIG = {
         apiKey: process.env.ALGOLIA_API_KEY
     },
     timestampField: 'modifiedAt',
+    liveIndex: true,
     schema: {
         test: {
             path: 'algolia/tests/testData',

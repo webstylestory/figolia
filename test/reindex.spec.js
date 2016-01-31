@@ -42,10 +42,6 @@ const algoliaFixtures = [
     }
 ];
 
-const algoliaSettings =  {
-    ranking: ['typo', 'geo', 'words']
-};
-
 const firebaseFixtures = {
     tests: {
         testData: {
@@ -92,15 +88,8 @@ describe('Indexing a Firebase dataset', function() {
             algolia = services.algolia;
             const index = algolia.initIndex(`${prefix}_standard_keys`);
 
-            return Promise.all([
-                    index.setSettings(algoliaSettings),
-                    index.saveObjects(algoliaFixtures)
-                ])
-                .then(tasks => {
-                    // Only wait th last item for faster processing
-                    let lastTask = _maxBy(tasks, 'taskID');
-                    return index.waitTask(lastTask.taskID);
-                })
+            return index.saveObjects(algoliaFixtures)
+                .then(task => index.waitTask(task.taskID))
                 .then(() => fb
                     .child(`${CONFIG.firebase.uid}`)
                     .set(firebaseFixtures)
