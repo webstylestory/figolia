@@ -10,9 +10,6 @@ var packageJson = require('./package.json');
 // Require main routine
 var main = require('./src/main').default;
 
-// Load config
-//var CONFIG = require(configFile).default;
-
 // Commandline management
 program
     .version(packageJson.version)
