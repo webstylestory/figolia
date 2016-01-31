@@ -3,7 +3,7 @@
 
 # Figolia
 
-⚡️ Keep your Algolia search indexes in sync with your Firebase datasets!
+⚡️  Keep your Algolia search indexes in sync with your Firebase datasets!
 
 When using [Firebase](http://firebase.com) as a web or mobile backend, [Algolia](http://algolia.com) search-as-a-service is a really nice addition, considering the poor search and querying capabilities of Firebase. Figolia is the perfect companion to make their synchronization happen in no time.
 
@@ -15,6 +15,7 @@ When using [Firebase](http://firebase.com) as a web or mobile backend, [Algolia]
   * [Configuration](#configuration)
       * [Firebase configuration](#firebase-configuration)
       * [Reindexing, incremental indexing](#reindexing-incremental-indexing)
+  * [Release Notes](#release-notes)
   * [Known Issues](#known-issues)
   * [Developers](#developers)
       * [Logging & Debugging](#logging--debugging)
@@ -23,7 +24,6 @@ When using [Firebase](http://firebase.com) as a web or mobile backend, [Algolia]
   * [License](#license)
 
 
----
 
 ## Features
 
@@ -32,11 +32,10 @@ When using [Firebase](http://firebase.com) as a web or mobile backend, [Algolia]
   * restarts from last indexing timestamp the next time it's launched
   * TODO - throttle indexing to limit Algolia API calls
 
----
 
 ## Install
 
-    npm install figolia
+    npm install -g figolia
 
 Or, download from github repository :
 
@@ -44,7 +43,6 @@ Or, download from github repository :
     cd figolia
     npm install
 
----
 
 ## Usage
 
@@ -60,12 +58,13 @@ Or, download from github repository :
         -l, --live-index     Keep server running to live index Firebase operations (otherwise exit after indexing)
         -r, --reset          Force index reset (clear & full reindex)
 
+*Note: if downloaded for github, try using `npm link` first*
+
 For production setup, I strongly encourage the use of a good process manager 
 like [PM2](https://github.com/Unitech/pm2)
 
 Important : the server needs a config file before it can runs, at least to provide your Algolia and Firebase API keys. See the [section below about configuration](#configuration).
 
----
 
 ## Configuration
 
@@ -170,13 +169,12 @@ add the following in your Firebase instance security rules:
       }
     }
 
----
 
 ## Release notes
 
+ * 0.1.1 - Fix commandline issue with missing npm package
  * 0.1.0 - Initial release
 
----
 
 ## Known issues
 
@@ -185,7 +183,6 @@ add the following in your Firebase instance security rules:
     Workaround is to delete timestamp in `algolia/index` backend in Firebase to 
     force a full reindex.
 
----
 
 ## Developers
 
@@ -226,7 +223,6 @@ even better if the new features are documented in this README ;-)
 
 I will have a look at anything you will have the time to propose.
 
----
 
 ## License
 
