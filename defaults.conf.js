@@ -31,14 +31,16 @@ let CONFIG = {
     // Stay running and live-index all firebase operations.
     // Can be overriden on the commandline.
     liveIndex: false,
+    // Minimum throttle delay between Algolia API calls (in seconds)
+    // Note: between each throttle delay, a maximum of
+    // [3 * dataset number] calls can be made (add, update & delete)
+    throttleDelay: 10,
     // Optional but strongly reccomended, this field will be checked against last
     // run date to see if reindexing is necessary.
     // Field content must be UNIX timestamp (example Date.now() output).
     // WARNING: Without this field being correctly configured,
     // everything is re-indexed at rerun.
-    //
     timestampField: 'modifiedAt',
-    //
     // Firebase datasets to index in Algolia
     schema: {
 //         todoLists: {

@@ -4,24 +4,27 @@ const info = Debug('figolia:info:remove-from-index');
 const debug = Debug('figolia:remove-from-index');
 
 //
-// Delete an object from the index based on firebase snapshot
+// Delete objects from the index based on firebase snapshot
 // This should only be used as a 'child_removed' firebase callback
 //
 // @return Promise
 //
-const deleteFromIndex = ({ fbRef, CONFIG, dataset, fb, algolia }) => {
+const removeFromIndex = ({ firebaseObjects, CONFIG, dataset, fb, algolia }) => {
 
-  const objectID = dataset.key ? fbRef.val()[dataset.key] : fbRef.key();
+  let objectIDs = [];
+  for (let key in firebaseObjects) {
+    objectIDs.push(dataset.key ? firebaseObjects[key][dataset.key] : key);
+  }
 
-  info(`Removing ${dataset.path} from index with objectID ${objectID}`);
+  info(`Removing ${objectIDs.length} items from ${dataset.path}`);
 
   const index = algolia.initIndex(dataset.index);
 
   // Remove the object from Algolia
-  return index.deleteObject(objectID)
+  return index.deleteObjects(objectIDs)
     .then(task => index.waitTask(task.taskID))
-    .then(() => debug(`Done removing ${dataset.path} objectID ${objectID}`))
+    .then(() => debug(`Done removing ${objectIDs.length} items from ${dataset.path}`))
 
 };
 
-export default deleteFromIndex;
+export default removeFromIndex;

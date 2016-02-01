@@ -3,6 +3,10 @@ import { expect } from 'chai';
 import removeFromIndex from '../src/remove-from-index';
 import initServices from '../src/init-services';
 
+// Helper function to `expect` functions with args
+// Usage : `expectCalling(myFunc).withArgs('badArg').to.throw(/gtfo/)`
+let expectCalling = func => ({ withArgs: (...args) => expect(() => func(...args)) });
+
 // Environment variables must be provided for the tests to work
 const now = Date.now();
 const prefix = `ALGOLIA_FIREBASE_INDEXER_TEST_${now}`;
@@ -33,23 +37,14 @@ const CONFIG = {
 
 const algoliaFixtures = [
     {
+        objectID: 'defaultKey1',
+        field: 'champagne'
+    },
+    {
         objectID: 'defaultKey2',
         field: 'champagne'
     }
 ];
-
-const firebaseFixtures = {
-    tests: {
-        testData: {
-            defaultKey1: {
-                ok: true
-            },
-            defaultKey2: {
-                ok: true
-            }
-        }
-    }
-};
 
 
 //
@@ -71,11 +66,7 @@ describe('Object removal from Algolia index', function() {
             const index = algolia.initIndex(CONFIG.schema.test.index);
 
             return index.saveObjects(algoliaFixtures)
-                .then(task => index.waitTask(task.taskID))
-                .then(() => fb
-                    .child(`${CONFIG.firebase.uid}`)
-                    .set(firebaseFixtures)
-                );
+                .then(task => index.waitTask(task.taskID));
         });
 
     });
@@ -86,27 +77,19 @@ describe('Object removal from Algolia index', function() {
 
         // Remove test data
         return algolia.deleteIndex(CONFIG.schema.test.index)
-            .then(task => index.waitTask(task.taskID))
-            // Remove test data in firebase
-            .then(() => fb.child(`${CONFIG.firebase.uid}/tests`).remove());
+            .then(task => index.waitTask(task.taskID));
 
     });
 
-    it('should throw an error if services are missing', function(done) {
+    it('should throw an error if services are missing', function() {
 
-        return fb.child(`${CONFIG.firebase.uid}/tests/testData/defaultKey1`)
-            .once('value')
-            .then(fbRef => removeFromIndex({
-                fbRef,
+        expectCalling(removeFromIndex).withArgs({
+                firebaseObjects: {},
                 CONFIG,
                 dataset: { path: 'any' },
                 fb,
                 algolia: null
-            }))
-            .catch(err => {
-                expect(err).to.be.instanceof(Error);
-                done();
-            });
+            }).to.throw(Error)
 
     });
 
@@ -114,19 +97,17 @@ describe('Object removal from Algolia index', function() {
 
         const index = algolia.initIndex(CONFIG.schema.test.index);
 
-        return fb.child(`${CONFIG.firebase.uid}/tests/testData/defaultKey1`)
-            .once('value')
-            .then(fbRef => removeFromIndex({
-                fbRef,
+        return removeFromIndex({
+                firebaseObjects: { keyMissing: {} },
                 CONFIG,
                 dataset: CONFIG.schema.test,
                 fb,
                 algolia
-            }))
+            })
             .then(() => index.search('champagne'))
             .then(res => {
 
-                expect(res.nbHits).to.equal(1);
+                expect(res.nbHits).to.equal(2);
 
             });
     });
@@ -135,19 +116,17 @@ describe('Object removal from Algolia index', function() {
 
         const index = algolia.initIndex(CONFIG.schema.test.index);
 
-        return fb.child(`${CONFIG.firebase.uid}/tests/testData/defaultKey2`)
-            .once('value')
-            .then(fbRef => removeFromIndex({
-                fbRef,
+        return removeFromIndex({
+                firebaseObjects: { 'defaultKey1': {} },
                 CONFIG,
                 dataset: CONFIG.schema.test,
                 fb,
                 algolia
-            }))
+            })
             .then(() => index.search('champagne'))
             .then(res => {
 
-                expect(res.nbHits).to.equal(0);
+                expect(res.nbHits).to.equal(1);
 
             });
     });
