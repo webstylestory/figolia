@@ -1,4 +1,4 @@
-[![Build Status](https://img.shields.io/travis/webstylestory/figolia.svg?style=flat-square)](https://travis-ci.org/webstylestory/figolia) [![Coverage Status](https://img.shields.io/coveralls/webstylestory/figolia.svg?style=flat-square)](https://coveralls.io/github/webstylestory/figolia) [![Code climate](https://img.shields.io/codeclimate/github/kabisaict/flow.svg?style=flat-square)](https://codeclimate.com/github/webstylestory/figolia) [![Dependency Status](https://img.shields.io/david/webstylestory/figolia.svg?style=flat-square)](https://david-dm.org/webstylestory/figolia) [![devDependency Status](https://img.shields.io/david/dev/webstylestory/figolia.svg?style=flat-square)](https://david-dm.org/webstylestory/figolia#info=devDependencies) [![Babel stage-2 badge](https://img.shields.io/badge/babel-stage%202-blue.svg?style=flat-square)](https://babeljs.io/docs/plugins/preset-stage-2/) [![License](http://img.shields.io/:license-mit-blue.svg?style=flat-square)](https://raw.githubusercontent.com/webstylestory/figolia/master/LICENSE) [![Made by french tech badge](https://img.shields.io/badge/made%20by-french%20%E2%9D%A4%20tech-orange.svg?style=flat-square)](http://webstylestory.com)
+[![Version npm](https://img.shields.io/npm/v/figolia.svg?style=flat-square)](https://www.npmjs.com/package/figolia) [![Build Status](https://img.shields.io/travis/webstylestory/figolia.svg?style=flat-square)](https://travis-ci.org/webstylestory/figolia) [![Coverage Status](https://img.shields.io/coveralls/webstylestory/figolia.svg?style=flat-square)](https://coveralls.io/github/webstylestory/figolia) [![Code climate](https://img.shields.io/codeclimate/github/kabisaict/flow.svg?style=flat-square)](https://codeclimate.com/github/webstylestory/figolia) [![Dependency Status](https://img.shields.io/david/webstylestory/figolia.svg?style=flat-square)](https://david-dm.org/webstylestory/figolia) [![devDependency Status](https://img.shields.io/david/dev/webstylestory/figolia.svg?style=flat-square)](https://david-dm.org/webstylestory/figolia#info=devDependencies) [![Babel stage-2 badge](https://img.shields.io/badge/babel-stage%202-blue.svg?style=flat-square)](https://babeljs.io/docs/plugins/preset-stage-2/) [![License](http://img.shields.io/:license-mit-blue.svg?style=flat-square)](https://raw.githubusercontent.com/webstylestory/figolia/master/LICENSE) [![Made by french tech badge](https://img.shields.io/badge/made%20by-french%20%E2%9D%A4%20tech-orange.svg?style=flat-square)](http://webstylestory.com)
 
 
 # Figolia
@@ -19,8 +19,6 @@ When using [Firebase](http://firebase.com) as a web or mobile backend, [Algolia]
   * Restarts from last indexing timestamp the next time it's launched
   * Throttle indexing to limit Algolia API calls
 
-
-[![NPM](https://nodei.co/npm/figolia.png?compact=true)](https://nodei.co/npm/figolia)
 
 ---
 
@@ -191,6 +189,7 @@ To make them work with figolia, which is developped with ES2015 and deployed wit
 
 ## Release notes
 
+ * 0.2.1 - Fix ignore option again, was broken with default config
  * 0.2.0 - Add throttle option to limit API calls
  * 0.1.5 - Add ignore/only in babel-register options as .babelrc switches ignored
  * 0.1.4 - Add ignore/only in .babelrc to enable compilation in global cli

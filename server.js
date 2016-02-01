@@ -2,10 +2,17 @@
 
 // Enable loading ES2016 files with babel
 require('babel-register')({
-    // Note: ignore and only options *cannot* be specified in .babelrc
+    // Note: ignore option *cannot* be specified in .babelrc
     //       when using babel-register
-    ignore: false,
-    only: /figolia\/src/
+    ignore: function(filename) {
+        if (filename.match(/figolia.*node_modules/)) {
+            return false;
+        }
+        if (filename.match(/figolia/)) {
+            return true;
+        }
+        return false;
+    },
 });
 var program = require('commander');
 var packageJson = require('./package.json');
