@@ -67,11 +67,7 @@ Or, download from github repository :
 
 *Note: if downloaded from github, try using `npm link` first, or, `./bin/figolia`*
 
-For production setup, I strongly encourage the use of a good process manager 
-like [PM2](https://github.com/Unitech/pm2) (currently, this does not seem to work,
-`babel-register` hook has an issue when used in pm2, but it works with [foreverjs](https://github.com/foreverjs/forever))
-
-Important : the server needs a config file before it can runs, at least to provide the schema you wish to index. See the [section below about configuration](#configuration).
+Important: for the moment, there is no way to run the server without a config file, at least to provide the schema you wish to index. See the [section below about configuration](#configuration).
 
 
 ## Configuration
@@ -144,9 +140,6 @@ Copy the `defaults.conf.js` and modify it according to your needs, before runnin
     };
 
 
-*Note for production use: you can also uncomment production-specific settings below the main, in the same file, to deal with multi environment setup*
-
-
 ### Firebase configuration
 
 
@@ -185,6 +178,16 @@ add the following in your Firebase instance security rules:
       }
     }
 
+### Production setup
+
+For production setup, I strongly encourage the use of a good process manager 
+like [PM2](https://github.com/Unitech/pm2) or [foreverjs](https://github.com/foreverjs/forever).
+
+To make them work with figolia, which is developped with ES2015 and deployed without pre-compilation, you need to specify the full path of the executable :
+
+    $ which figolia
+    /usr/local/bin/figolia
+    $ pm2 start /usr/local/bin/figolia
 
 ## Release notes
 
@@ -201,9 +204,11 @@ add the following in your Firebase instance security rules:
 
 
   * [#15](#15) If relaunching indexing after a previous one, with timestamp
-    stored in Firebase, removed items since then will not be removed from index.
+    stored in Firebase, removed items since then will not be removed from index. 
     Workaround is to delete timestamp in `algolia/index` backend in Firebase to 
-    force a full reindex.
+    force a full reindex. A fix would enable reflecting deletions in the index, but 
+    the small updates would remain unnoticed, so if your database stay wuthout
+    indexing for too long, a full reindex is the most adequate option.
 
 
 
