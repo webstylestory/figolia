@@ -32,10 +32,15 @@ const CONFIG = {
     },
     timestampField: 'modifiedAt',
     liveIndex: true,
+    throttleDelay: 10,
     schema: {
         test: {
             path: 'algolia/tests/testData',
             index: `${prefix}_standard_keys`
+        },
+        test2: {
+            path: 'algolia/tests/testData',
+            index: `${prefix}_standard_keys_2`
         }
     }
 };
@@ -104,19 +109,34 @@ describe('Live indexing of a Firebase dataset to Algolia', function() {
                     .child(`${CONFIG.firebase.uid}`)
                     .set(firebaseFixtures)
                 )
-                // Index first set of data
-                .then(() => reindex({
-                    CONFIG,
-                    dataset: CONFIG.schema.test,
-                    fb,
-                    algolia
-                }))
-                // Start live indexing
+                // Index the two set of data
+                .then(() => Promise.all([
+                    reindex({
+                        CONFIG,
+                        dataset: CONFIG.schema.test,
+                        fb,
+                        algolia
+                    }),
+                    reindex({
+                        CONFIG,
+                        dataset: CONFIG.schema.test2,
+                        fb,
+                        algolia
+                    })
+                ]))
+                // Start live indexing both datasets
                 .then(() => {
                     liveIndex({
                         ts: now - 100,
                         CONFIG,
                         dataset: CONFIG.schema.test,
+                        fb,
+                        algolia
+                    });
+                    liveIndex({
+                        ts: now - 100,
+                        CONFIG,
+                        dataset: CONFIG.schema.test2,
                         fb,
                         algolia
                     });
@@ -129,7 +149,9 @@ describe('Live indexing of a Firebase dataset to Algolia', function() {
 
         const indexesToDelete = [
             `${prefix}_standard_keys`,
-            `${prefix}_standard_keys_temp`
+            `${prefix}_standard_keys_temp`,
+            `${prefix}_standard_keys_2`,
+            `${prefix}_standard_keys_temp_2`
         ];
 
         const firebaseToDelete = [
@@ -179,7 +201,7 @@ describe('Live indexing of a Firebase dataset to Algolia', function() {
 
         return fb.child(`${CONFIG.firebase.uid}/tests/testData/defaultKey3`)
             .set(firebaseFixtures.tests.newTestData.defaultKey3)
-            .then(() => waitFor(15))
+            .then(() => waitFor(45))
             .then(() => fb.child(`${CONFIG.firebase.uid}/${prefix}_standard_keys/ts`)
                 .once('value')
             )
@@ -202,7 +224,7 @@ describe('Live indexing of a Firebase dataset to Algolia', function() {
 
         return fb.child(`${CONFIG.firebase.uid}/tests/testData/defaultKey2`)
             .remove()
-            .then(() => waitFor(15))
+            .then(() => waitFor(45))
             .then(() => index.search())
             .then(res => {
 

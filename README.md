@@ -14,10 +14,10 @@ When using [Firebase](http://firebase.com) as a web or mobile backend, [Algolia]
 ## Features
 
 
-  * sync multiple Firebase references
-  * all CRUD Firebase operations reflected in Algolia 
-  * restarts from last indexing timestamp the next time it's launched
-  * TODO - throttle indexing to limit Algolia API calls
+  * Sync multiple Firebase references
+  * All CRUD Firebase operations reflected in Algolia 
+  * Restarts from last indexing timestamp the next time it's launched
+  * Throttle indexing to limit Algolia API calls
 
 
 [![NPM](https://nodei.co/npm/figolia.png?compact=true)](https://nodei.co/npm/figolia)
@@ -42,13 +42,13 @@ When using [Firebase](http://firebase.com) as a web or mobile backend, [Algolia]
 ## Install
 
 
-    npm install -g figolia
+    $ [sudo] npm install -g figolia
 
 Or, download from github repository :
 
-    git clone https://github.com/webstylestory/figolia.git
-    cd figolia
-    npm install
+    $ git clone https://github.com/webstylestory/figolia.git
+    $ cd figolia
+    $ npm install
 
 
 ## Usage
@@ -65,18 +65,19 @@ Or, download from github repository :
         -l, --live-index     Keep server running to live index Firebase operations (otherwise exit after indexing)
         -r, --reset          Force index reset (clear & full reindex)
 
-*Note: if downloaded for github, try using `npm link` first*
+*Note: if downloaded from github, try using `npm link` first, or, `./bin/figolia`*
 
 For production setup, I strongly encourage the use of a good process manager 
-like [PM2](https://github.com/Unitech/pm2)
+like [PM2](https://github.com/Unitech/pm2) (currently, this does not seem to work,
+`babel-register` hook has an issue when used in pm2, but it works with [foreverjs](https://github.com/foreverjs/forever))
 
-Important : the server needs a config file before it can runs, at least to provide your Algolia and Firebase API keys. See the [section below about configuration](#configuration).
+Important : the server needs a config file before it can runs, at least to provide the schema you wish to index. See the [section below about configuration](#configuration).
 
 
 ## Configuration
 
 
-Edit the `config.example.js` file with the data relevant to your setup, and rename it to `config.js` before running the server.
+Copy the `defaults.conf.js` and modify it according to your needs, before running the server.
 
 
     let CONFIG = {
@@ -100,6 +101,10 @@ Edit the `config.example.js` file with the data relevant to your setup, and rena
         // Stay running and live-index all firebase operations.
         // Can be overriden on the commandline.
         liveIndex: false,
+        // Minimum throttle delay between Algolia API calls (in seconds)
+        // Note: between each throttle delay, a maximum of
+        // [3 * dataset number] calls can be made (add, update & delete)
+        throttleDelay: 10,
         // Optional, this field will be checked against last
         // run date to see if reindexing is necessary.
         // Field type must be UNIX timestamp (example Javascript Date.now()).
@@ -145,11 +150,10 @@ Edit the `config.example.js` file with the data relevant to your setup, and rena
 ### Firebase configuration
 
 
-In order for `figolia` to work properly, it has to store 
+In order for `figolia` to work properly, it must store 
 the last known indexing date in firebase. You can specify the path where you
-want this information stored in the config ([see above](#configuration)).
-
-This path will also be used to store data fixtures [if you run the tests](#testing).
+want this information stored in the config ([see above](#configuration)). 
+Default is to use the path named `figolia` at the root of your Firebase reference.
 
 
 ### Reindexing, incremental indexing
@@ -184,6 +188,7 @@ add the following in your Firebase instance security rules:
 
 ## Release notes
 
+ * 0.2.0 - Add throttle option to limit API calls
  * 0.1.5 - Add ignore/only in babel-register options as .babelrc switches ignored
  * 0.1.4 - Add ignore/only in .babelrc to enable compilation in global cli
  * 0.1.3 - Return of the .babelrc to fix the test suite
@@ -210,11 +215,11 @@ add the following in your Firebase instance security rules:
 
 By default, basic info is output in the console. Should you need more debug information, you can use the following command line:
 
-    DEBUG=figolia* npm start
+    DEBUG=figolia* figolia
 
 ...or go full throttle including algolia and firebase libs debug info :
 
-    DEBUG=* npm start
+    DEBUG=* figolia
 
 
 ### Testing

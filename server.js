@@ -16,21 +16,42 @@ var main = require('./src/main').default;
 // Commandline management
 program
     .version(packageJson.version)
-    .description(packageJson.description)
+    .description(packageJson.description + '\n\n  ' +
+        'All options can be set in configuration file and loaded with -c option, ' +
+        'or placed in ~/.figolia.conf.js.\n  An example configuration file, ' +
+        'containing default values, can be found here: ' + __dirname +
+        '/default.conf.js.\n\n  Full documentation: ' +
+        packageJson.homepage
+    )
     .usage('[options]')
-    .option('-c, --config [path]', 'Specify configuration (default to ~/.figolia.conf.js)')
+    .option('-c, --config [path]', 'Specify configuration (default ~/.figolia.conf.js)')
     .option('-l, --live-index', 'Keep server running to live index Firebase operations (otherwise exit after indexing)')
     .option('-r, --reset', 'Force index reset (clear & full reindex)')
+    .option('-t, --timestamp-field [name]', 'Object field name containing last modification timestamp (default \'modifiedAt\')')
+    .option('-d, --throttle-delay [n]',
+        'Minimum throttle delay between Algolia API calls (in seconds, default 10)\n\t\t\t\t  ' +
+        'Note: between each throttle delay, a maximum of \n\t\t\t\t  ' +
+        '{ 3 * number of datasets } API calls can be made (add, update & delete)',
+        parseInt
+    )
     .parse(process.argv);
 
 // Resolve configuration file
 var conf = program.config;
 var configFile = conf && conf.replace(/.js$/, '') || '~/.figolia.conf';
 
-// Load configuration and override values specified in commandline
-var CONFIG = require(configFile).default;
-CONFIG.reset = program.reset || CONFIG.reset;
-CONFIG.liveIndex = program.liveIndex || CONFIG.liveIndex;
+// Load user configuration or load default config from module folder
+var CONFIG;
+try {
+    CONFIG = require(configFile).default;
+} catch (err) {
+    CONFIG = require('./defaults.conf.js').default;
+}
+
+// Override CONFIG values from commandline
+['reset', 'liveIndex', 'timestampField', 'throttleDelay'].forEach(key => {
+    CONFIG[key] = program[key] || CONFIG[key];
+});
 
 // Launch server
 main(CONFIG)
