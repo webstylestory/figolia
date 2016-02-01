@@ -19,10 +19,10 @@ require('babel-register')({
 var path = require('path');
 var os = require('os');
 var program = require('commander');
-var packageJson = require(path.resolve('./package.json'));
+var packageJson = require(path.join(__dirname, 'package.json'));
 
 // Require main routine
-var main = require(path.resolve('./src/main')).default;
+var main = require(path.join(__dirname, 'src/main')).default;
 
 // Commandline management
 program
@@ -56,7 +56,7 @@ var CONFIG;
 try {
     CONFIG = require(path.resolve(configFile).replace(/.js$/, ''));
 } catch (err) {
-    CONFIG = require(path.resolve('./defaults.conf.js'));
+    CONFIG = require(path.join(__dirname, 'defaults.conf.js'));
 }
 
 // Override CONFIG values from commandline

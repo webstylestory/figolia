@@ -189,7 +189,7 @@ To make them work with figolia, which is developped with ES2015 and deployed wit
 
 ## Release notes
 
- * 0.2.3 - Fix babel ignore option and config loading
+ * 0.2.4 - Fix babel ignore option and config loading
  * 0.2.0 - Add throttle option to limit API calls
  * 0.1.5 - Add ignore/only in babel-register options as .babelrc switches ignored
  * 0.1.1 - Fix commandline issue with missing npm package
