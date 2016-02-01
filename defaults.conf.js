@@ -1,3 +1,4 @@
+/*eslint-disable */
 //
 // algolia-firebase-indexer main config file
 // -----------------------------------------
@@ -8,9 +9,8 @@
 //   * You Algolia and Firebase keys
 //   * The schema/indexes you want to sync
 //
-import { defaultsDeep as _defaultsDeep } from 'lodash';
 
-let CONFIG = {
+var CONFIG = {
     // Firebase credentials
     firebase: {
         instance: process.env.FIREBASE_INSTANCE || 'TO_BE_CHANGED',
@@ -77,26 +77,16 @@ let CONFIG = {
 };
 
 //
-// Uncomment this for production setup. This will be merged into CONFIG object.
+// Uncomment this for production setup.
 //
 
 // if (process.env.NODE_ENV === 'production') {
-//     CONFIG = _defaultsDeep({}, {
-//         // Production firebase credentials
-//         firebase: {
-//             instance: 'TO_BE_CHANGED',
-//             secret: 'TO_BE_CHANGED',
-//         },
-//         schema: {
-//             // Example production indexes
-//             todoLists: {
-//                 idnex: 'prod_todo_lists',
-//             },
-//             todoItems: {
-//                 idnex: 'prod_todo_items',
-//             }
-//         }
-//     }, CONFIG);
+//
+//     CONFIG.firebase.instance = 'TO_BE_CHANGED';
+//     CONFIG.firebase.secret = 'TO_BE_CHANGED';
+//     CONFIG.schema.todoLists.index = 'prod_todo_lists';
+//     CONFIG.schema.todoItems.index = 'prod_todo_items';
+//
 // }
 
-export default CONFIG;
+module.exports = CONFIG;

@@ -74,7 +74,7 @@ Important: for the moment, there is no way to run the server without a config fi
 Copy the `defaults.conf.js` and modify it according to your needs, before running the server.
 
 
-    let CONFIG = {
+    var CONFIG = {
         // Firebase credentials
         firebase: {
             instance: 'TO_BE_CHANGED',
@@ -189,7 +189,7 @@ To make them work with figolia, which is developped with ES2015 and deployed wit
 
 ## Release notes
 
- * 0.2.2 - Fix ignore option again, was broken with default config
+ * 0.2.3 - Fix babel ignore option and config loading
  * 0.2.0 - Add throttle option to limit API calls
  * 0.1.5 - Add ignore/only in babel-register options as .babelrc switches ignored
  * 0.1.1 - Fix commandline issue with missing npm package
