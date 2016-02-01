@@ -6,12 +6,12 @@ require('babel-register')({
     //       when using babel-register
     ignore: function(filename) {
         if (filename.match(/figolia.*node_modules/)) {
-            return false;
-        }
-        if (filename.match(/figolia/)) {
             return true;
         }
-        return false;
+        if (filename.match(/figolia/)) {
+            return false;
+        }
+        return true;
     },
 });
 var program = require('commander');

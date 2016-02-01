@@ -189,12 +189,9 @@ To make them work with figolia, which is developped with ES2015 and deployed wit
 
 ## Release notes
 
- * 0.2.1 - Fix ignore option again, was broken with default config
+ * 0.2.2 - Fix ignore option again, was broken with default config
  * 0.2.0 - Add throttle option to limit API calls
  * 0.1.5 - Add ignore/only in babel-register options as .babelrc switches ignored
- * 0.1.4 - Add ignore/only in .babelrc to enable compilation in global cli
- * 0.1.3 - Return of the .babelrc to fix the test suite
- * 0.1.2 - Fix global usage issue with broken babel presets
  * 0.1.1 - Fix commandline issue with missing npm package
  * 0.1.0 - Initial release
 
