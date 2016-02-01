@@ -20,6 +20,8 @@ const CONFIG = {
         apiKey: process.env.ALGOLIA_API_KEY
     },
     timestampField: 'modifiedAt',
+    throttleDelay: 10,
+    liveIndex: false,
     schema: {}
 };
 

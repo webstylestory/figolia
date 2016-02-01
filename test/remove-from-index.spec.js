@@ -22,6 +22,8 @@ const CONFIG = {
         applicationId: process.env.ALGOLIA_APP_ID,
         apiKey: process.env.ALGOLIA_API_KEY
     },
+    throttleDelay: 10,
+    liveIndex: false,
     schema: {
         test: {
             path: `algolia/tests/testData`,
