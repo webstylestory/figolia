@@ -12,11 +12,11 @@ const info = Debug('figolia:info:reindex');
 //
 const reindex = ({ ts, CONFIG, dataset, fb, algolia }) => {
 
-    const objectQuery = (ts && CONFIG.timestampField) ?
+    const objectQuery = (ts && dataset.timestampField) ?
         // If timestamp available, only reindex recent items
         // TODO(#15) check for deleted items since then, nd remove them from index
         fb.child(dataset.path)
-            .orderByChild(CONFIG.timestampField)
+            .orderByChild(dataset.timestampField)
             .startAt(ts + 1) :
         // Otherwise, just get all items
         fb.child(dataset.path);

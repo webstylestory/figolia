@@ -95,7 +95,7 @@ const liveIndex = ({ ts, CONFIG, dataset, fb, algolia }) => {
     // Firebase reference for recent items (> last object timestamp)
     let datasetRef = fb
         .child(dataset.path)
-        .orderByChild(CONFIG.timestampField)
+        .orderByChild(dataset.timestampField)
         .startAt(ts + 1);
 
     // Listen for changes to Firebase data, only recent items added, otherwise

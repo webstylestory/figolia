@@ -108,8 +108,8 @@ const addToIndex = ({
         })
         // Store last timestamp, if available, for future reference
         .then(() => {
-            let lastObject = _maxBy(_values(firebaseObjects), CONFIG.timestampField)
-            let ts = lastObject[CONFIG.timestampField] || null;
+            let lastObject = _maxBy(_values(firebaseObjects), dataset.timestampField)
+            let ts = lastObject[dataset.timestampField] || null;
 
             return fb.child(`${CONFIG.firebase.uid}/${dataset.index}/ts`)
                 .set(ts)

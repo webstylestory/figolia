@@ -26,6 +26,7 @@ const CONFIG = {
     liveIndex: false,
     schema: {
         test: {
+            timestampField: 'updatedAt',
             path: `algolia/tests/testData`,
             index: `${prefix}_test`
         }

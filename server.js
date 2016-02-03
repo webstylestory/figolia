@@ -64,6 +64,14 @@ try {
     CONFIG[key] = program[key] || CONFIG[key];
 });
 
+// Propagate timestampField to dataset config
+if (CONFIG[timestampField]) {
+    for (var key in CONFIG.schema) {
+        CONFIG.schema[key].timestampField =
+            CONFIG.schema[key].timestampField || CONFIG[timestampField];
+    }
+}
+
 // Launch server
 main(CONFIG)
     .then(() => {

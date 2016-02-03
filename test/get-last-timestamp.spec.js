@@ -19,7 +19,6 @@ const CONFIG = {
         applicationId: process.env.ALGOLIA_APP_ID,
         apiKey: process.env.ALGOLIA_API_KEY
     },
-    timestampField: 'modifiedAt',
     throttleDelay: 10,
     liveIndex: false,
     schema: {}
@@ -78,6 +77,7 @@ describe('Get last indexing timestamp of dataset', function() {
     it('should eventually return null if dataset timestamp is missing', function() {
 
         const dataset = {
+            timestampField: 'updatedAt',
             index: 'not_indexed'
         };
 
@@ -93,6 +93,7 @@ describe('Get last indexing timestamp of dataset', function() {
     it('should eventually return the last dataset indexing timestamp', function() {
 
         let dataset = {
+            timestampField: 'updatedAt',
             index: `${prefix}_test_set`
         };
 

@@ -62,7 +62,7 @@ Or, download from github repository :
         -c, --config [path]           Specify configuration (default ~/.figolia.conf.js)
         -l, --live-index              Keep server running to live index Firebase operations (otherwise exit after indexing)
         -r, --reset                   Force index reset (clear & full reindex)
-        -t, --timestamp-field [name]  Object field name containing last modification timestamp (default 'modifiedAt')
+        -t, --timestamp-field [name]  Object field name containing last modification timestamp (default 'updatedAt')
         -d, --throttle-delay [n]      Minimum throttle delay between Algolia API calls (in seconds, default 10)
                                       Note: between each throttle delay, a maximum of
                                       { 3 * number of datasets } API calls can be made (add, update & delete)
@@ -108,7 +108,7 @@ Copy the `defaults.conf.js` and modify it according to your needs, before runnin
         // Field type must be UNIX timestamp (example Javascript Date.now()).
         // WARNING: Without this field being corectly configured,
         // everything is re-indexed at each rerun.
-        timestampField: 'modifiedAt',
+        timestampField: 'updatedAt',
         // Firebase datasets to index in Algolia (examples)
         schema: {
             todoLists: {
@@ -121,9 +121,12 @@ Copy the `defaults.conf.js` and modify it according to your needs, before runnin
                 key: 'id',
                 // Optional, list of fields to index
                 // (otherwise, every field will be indexed)
+                // Optional, dataset-specific update time field
+                // (default is use global setting above)
+                timestampField: 'createdAt',
                 includeFields: [
                     'name',
-                    'modifiedAt'
+                    'updatedAt'
                 ],
                 // Optional, list of fields to exclude from index
                 // Note: if both are specified, `excludeFields` 
@@ -160,12 +163,12 @@ and then re-indexed from the current Firebase connection. **Any previously index
 This is not reccomended, as it can lead to many useless operations, and bandwith waste.
 
 I really suggest to specify `path` and `uid` in `firebase` config field, and give
-write access to that uid in the Firebase Rules. Also mandatory, the last modificated 
+write access to that uid in the Firebase Rules. Also mandatory, the last update 
 time of each items must be set in the schema definition (for example, 
-in a `modifiedAt` field). 
+in a `updatedAt` field). 
 
 This is in your app, if you did not implement such feature 
-to track the last modified time of each of your objects, you'll have to do so 
+to track the last update time of each of your objects, you'll have to do so 
 before using this tool efficiently. You can also chose to leave this field
 unchanged for certain minor operations that does not need reindexation.
 
@@ -180,7 +183,7 @@ add the following in your Firebase instance security rules:
     // Optional, to avoid Firebase warnings when running the tests
     "tests": {
       "testData": {
-        ".indexOn": "modifiedAt"
+        ".indexOn": "updatedAt"
       }
     }
 

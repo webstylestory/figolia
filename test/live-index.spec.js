@@ -30,15 +30,16 @@ const CONFIG = {
         applicationId: process.env.ALGOLIA_APP_ID,
         apiKey: process.env.ALGOLIA_API_KEY
     },
-    timestampField: 'modifiedAt',
     liveIndex: true,
     throttleDelay: 10,
     schema: {
         test: {
+            timestampField: 'updatedAt',
             path: 'algolia/tests/testData',
             index: `${prefix}_standard_keys`
         },
         test2: {
+            timestampField: 'updatedAt',
             path: 'algolia/tests/testData',
             index: `${prefix}_standard_keys_2`
         }
@@ -64,13 +65,13 @@ const firebaseFixtures = {
                 text: 'previously indexed item',
                 customId: 'customKey1',
                 numberField: 42,
-                modifiedAt: now - 200
+                updatedAt: now - 200
             },
             defaultKey2: {
                 text: 'another item',
                 customId: 'customKey2',
                 numberField: 42,
-                modifiedAt: now - 100
+                updatedAt: now - 100
             }
         },
         newTestData: {
@@ -78,7 +79,7 @@ const firebaseFixtures = {
                 text: 'new item',
                 customId: 'customKey2',
                 numberField: 42,
-                modifiedAt: now
+                updatedAt: now
             }
         }
     }

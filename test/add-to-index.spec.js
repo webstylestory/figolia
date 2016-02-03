@@ -23,7 +23,6 @@ const baseConfig = {
         applicationId: process.env.ALGOLIA_APP_ID,
         apiKey: process.env.ALGOLIA_API_KEY
     },
-    timestampField: 'modifiedAt',
     throttleDelay: 10,
     liveIndex: false,
     schema: {}
@@ -56,19 +55,19 @@ const firebaseObjects = {
                 text: 'previously indexed item',
                 customId: 'customKey1',
                 numberField: 42,
-                modifiedAt: now - 200
+                updatedAt: now - 200
             },
             defaultKey2: {
                 text: 'first new item',
                 customId: 'customKey2',
                 numberField: 42,
-                modifiedAt: now - 100
+                updatedAt: now - 100
             },
             defaultKey3: {
                 text: 'earliest new item',
                 customId: 'customKey3',
                 numberField: 42,
-                modifiedAt: now
+                updatedAt: now
             }
         // }
     // }
@@ -185,6 +184,7 @@ describe('Indexing a group of objects', function() {
 
     it('should create Algolia index, if missing', function() {
         CONFIG.schema.missingIndex = {
+            timestampField: 'updatedAt',
             path: `${baseConfig.firebase.uid}/tests/testData`,
             index: `${prefix}_missing_index`
         };
@@ -211,6 +211,7 @@ describe('Indexing a group of objects', function() {
 
     it('should complete Algolia index with additional data', function() {
         CONFIG.schema.emptyPath = {
+            timestampField: 'updatedAt',
             path: `${baseConfig.firebase.uid}/tests/testData`,
             index: `${prefix}_standard_keys`
         };
@@ -237,6 +238,7 @@ describe('Indexing a group of objects', function() {
 
     it('with clearIndex option should fully resync Algolia with Firebase (standard key, all field)', function() {
         CONFIG.schema.standardKeys = {
+            timestampField: 'updatedAt',
             path: `${baseConfig.firebase.uid}/tests/testData`,
             index: `${prefix}_standard_keys`
         };
@@ -267,6 +269,7 @@ describe('Indexing a group of objects', function() {
 
     it('should empty Algolia index if Firebase path is missing or empty', function() {
         CONFIG.schema.emptyPath = {
+            timestampField: 'updatedAt',
             path: `${baseConfig.firebase.uid}/tests/thisPathIsEmpty`,
             index: `${prefix}_standard_keys`
         };
@@ -292,6 +295,7 @@ describe('Indexing a group of objects', function() {
 
     it('should sync Algolia with Firebase (standard key, field inclusion filter)', function() {
         CONFIG.schema.standardKeysInclusion = {
+            timestampField: 'updatedAt',
             path: `${baseConfig.firebase.uid}/tests/testData`,
             index: `${prefix}_standard_keys_inclusion`,
             includeFields: ['text', 'numberField']
@@ -315,7 +319,7 @@ describe('Indexing a group of objects', function() {
                 // Only 3 fields, including `_highlightResult`
                 expect(Object.keys(res.hits[0])).to.have.length(4);
                 expect(res.hits[0]).to.not.have.property('customId');
-                expect(res.hits[0]).to.not.have.property('modifiedAt');
+                expect(res.hits[0]).to.not.have.property('updatedAt');
                 expect(res.hits[0]).to.have.property('text');
                 expect(res.hits[0]).to.have.property('numberField');
                 expect(res.hits[0]).to.have.property('objectID')
@@ -327,6 +331,7 @@ describe('Indexing a group of objects', function() {
 
     it('should sync Algolia with Firebase (standard key, field exclusion filter)', function() {
         CONFIG.schema.standardKeysExclusion = {
+            timestampField: 'updatedAt',
             path: `${baseConfig.firebase.uid}/tests/testData`,
             index: `${prefix}_standard_keys_exclusion`,
             excludeFields: ['numberField', 'text']
@@ -352,7 +357,7 @@ describe('Indexing a group of objects', function() {
                 expect(res.hits[0]).to.not.have.property('text');
                 expect(res.hits[0]).to.not.have.property('numberField');
                 expect(res.hits[0]).to.have.property('customId');
-                expect(res.hits[0]).to.have.property('modifiedAt');
+                expect(res.hits[0]).to.have.property('updatedAt');
                 expect(res.hits[0]).to.have.property('objectID')
                     .that.match(/default/);
 
@@ -362,9 +367,10 @@ describe('Indexing a group of objects', function() {
 
     it('should sync Algolia with Firebase (standard key, field exclusion filter)', function() {
         CONFIG.schema.standardKeysBothclusion = {
+            timestampField: 'updatedAt',
             path: `${baseConfig.firebase.uid}/tests/testData`,
             index: `${prefix}_standard_keys_bothclusion`,
-            includeFields: ['numberField', 'text', 'modifiedAt'],
+            includeFields: ['numberField', 'text', 'updatedAt'],
             excludeFields: ['numberField']
         };
 
@@ -387,7 +393,7 @@ describe('Indexing a group of objects', function() {
                 expect(Object.keys(res.hits[0])).to.have.length(4);
                 expect(res.hits[0]).to.not.have.property('numberField');
                 expect(res.hits[0]).to.not.have.property('customId');
-                expect(res.hits[0]).to.have.property('modifiedAt');
+                expect(res.hits[0]).to.have.property('updatedAt');
                 expect(res.hits[0]).to.have.property('text');
                 expect(res.hits[0]).to.have.property('objectID')
                     .that.match(/default/);
@@ -398,6 +404,7 @@ describe('Indexing a group of objects', function() {
 
     it('should sync Algolia with Firebase (custom key, all fields)', function() {
         CONFIG.schema.customKeys = {
+            timestampField: 'updatedAt',
             path: `${baseConfig.firebase.uid}/tests/testData`,
             index: `${prefix}_custom_keys`,
             key: 'customId'
@@ -459,6 +466,7 @@ describe('Indexing a group of objects', function() {
 
     it('should return timestamp of last object', function() {
         CONFIG.schema.standardKeys = {
+            timestampField: 'updatedAt',
             path: `${baseConfig.firebase.uid}/tests/testData`,
             index: `${prefix}_standard_keys`
         };
@@ -508,10 +516,10 @@ describe('Indexing a group of objects', function() {
 
     //             expect(res.nbHits).to.equal(2);
     //             expect(res.hits[0])
-    //                 .to.have.property('modifiedAt')
+    //                 .to.have.property('updatedAt')
     //                 .that.is.above(timestamp);
     //             expect(res.hits[1])
-    //                 .to.have.property('modifiedAt')
+    //                 .to.have.property('updatedAt')
     //                 .that.is.above(timestamp);
 
     //         });
@@ -546,10 +554,10 @@ describe('Indexing a group of objects', function() {
 
     //             expect(res.nbHits).to.equal(2);
     //             expect(res.hits[0])
-    //                 .to.have.property('modifiedAt')
+    //                 .to.have.property('updatedAt')
     //                 .that.is.above(timestamp);
     //             expect(res.hits[1])
-    //                 .to.have.property('modifiedAt')
+    //                 .to.have.property('updatedAt')
     //                 .that.is.above(timestamp);
 
     //         });
@@ -557,6 +565,7 @@ describe('Indexing a group of objects', function() {
 
     it('should store last object timestamp', function() {
         CONFIG.schema.standardKeys = {
+            timestampField: 'updatedAt',
             path: `${baseConfig.firebase.uid}/tests/testData`,
             index: `${prefix}_standard_keys`
         };

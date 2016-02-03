@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { maxBy as _maxBy } from 'lodash';
+import { maxBy as _maxBy, cloneDeep as _cloneDeep } from 'lodash';
 import prettyjson from 'prettyjson';
 
 import initServices from '../src/init-services';
@@ -21,11 +21,11 @@ const CONFIG = {
         applicationId: process.env.ALGOLIA_APP_ID,
         apiKey: process.env.ALGOLIA_API_KEY
     },
-    timestampField: 'modifiedAt',
     throttleDelay: 10,
     liveIndex: false,
     schema: {
         test: {
+            timestampField: 'updatedAt',
             path: 'algolia/tests/testData',
             index: `${prefix}_standard_keys`
         }
@@ -51,13 +51,13 @@ const firebaseFixtures = {
                 text: 'previously indexed item',
                 customId: 'customKey1',
                 numberField: 42,
-                modifiedAt: now - 200
+                updatedAt: now - 200
             },
             defaultKey2: {
                 text: 'another item',
                 customId: 'customKey2',
                 numberField: 42,
-                modifiedAt: now - 100
+                updatedAt: now - 100
             }
         },
         newTestData: {
@@ -65,7 +65,7 @@ const firebaseFixtures = {
                 text: 'new item',
                 customId: 'customKey2',
                 numberField: 42,
-                modifiedAt: now
+                updatedAt: now
             }
         }
     }
@@ -139,10 +139,8 @@ describe('Calling main program', function() {
 
     it('should fully sync Firebase to empty index, without timestamp field', function() {
 
-        let simpleConfig = {
-            ...CONFIG,
-            timestampField: null
-        };
+        let simpleConfig = _cloneDeep(CONFIG);
+        simpleConfig.schema.test.timestampField = null;
 
         const index = algolia.initIndex(CONFIG.schema.test.index);
 
@@ -160,10 +158,8 @@ describe('Calling main program', function() {
 
     it('should clear and resync Firebase to existing index, without timestamp field', function() {
 
-        let simpleConfig = {
-            ...CONFIG,
-            timestampField: null
-        };
+        let simpleConfig = _cloneDeep(CONFIG);
+        simpleConfig.schema.test.timestampField = null;
 
         const index = algolia.initIndex(CONFIG.schema.test.index);
 

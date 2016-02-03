@@ -11,7 +11,7 @@ const info = Debug('figolia:info:get-last-timestamp');
 //
 const getLastTimestamp = ({ CONFIG, dataset, fb }) => {
 
-    if (!CONFIG.timestampField || !CONFIG.firebase.uid || !dataset.index) {
+    if (!dataset.timestampField || !CONFIG.firebase.uid || !dataset.index) {
         info(`Unable to fetch timestamp for index ${dataset.index}`);
         return Promise.resolve(null);
     }

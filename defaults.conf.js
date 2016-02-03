@@ -40,7 +40,7 @@ var CONFIG = {
     // Field content must be UNIX timestamp (example Date.now() output).
     // WARNING: Without this field being correctly configured,
     // everything is re-indexed at rerun.
-    timestampField: 'modifiedAt',
+    timestampField: 'updatedAt',
     // Firebase datasets to index in Algolia
     schema: {
 //         todoLists: {
@@ -51,11 +51,14 @@ var CONFIG = {
 //             // Optional, name of ID field (otherwise,
 //             // the Firebase object key will be used)
 //             key: 'id',
+//             // Optional, dataset-specific update time field
+//             // (default is use global setting above)
+//             timestampField: 'createdAt',
 //             // Optional, list of fields to index
 //             // (otherwise, every field will be indexed)
 //             includeFields: [
 //                 'name',
-//                 'modifiedAt'
+//                 'updatedAt'
 //             ],
 //             // Optional, list of fields to exclude from index
 //             // Note: if both are specified, `excludeFields`
@@ -69,9 +72,7 @@ var CONFIG = {
 //             // Second example dataset to index
 //             path: 'app/todoItems',
 //             index: 'dev_todo_items',
-//             key: 'id',
-//             lastModTime: 'modifiedAt',
-//             backup: './backup'
+//             key: 'id'
 //         }
     }
 };
