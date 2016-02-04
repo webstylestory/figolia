@@ -52,7 +52,7 @@ function main(CONFIG) {
                     info('(The server will now never stop by itself, please hit CTRL-C to force exit)');
                     return ts;
                 })
-                .then(ts => liveIndex({ CONFIG, dataset, ...services }));
+                .then(ts => liveIndex({ ts, CONFIG, dataset, ...services }));
 
         }))
     );
