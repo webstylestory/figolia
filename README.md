@@ -201,7 +201,7 @@ you need to specify the full path of the executable :
 
 ## Release notes
 
- * 0.2.7 - Change default timestamp field name to 'updatedAt', bug fixes
+ * 0.2.8 - Change default timestamp field name to 'updatedAt', bug fixes
  * 0.2.4 - Fix babel ignore option and config loading
  * 0.2.0 - Add throttle option to limit API calls
  * 0.1.5 - Add ignore/only in babel-register options as .babelrc switches ignored
