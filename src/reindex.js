@@ -29,6 +29,7 @@ const reindex = ({ ts, CONFIG, dataset, fb, algolia }) => {
     // Process gettings items from Firebase and pushing them to Algolia index
     return objectQuery.once('value')
         .then(fbRef => addToIndex({
+            ts,
             clearIndex,
             firebaseObjects: fbRef.val(),
             CONFIG,

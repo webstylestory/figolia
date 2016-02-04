@@ -20,6 +20,7 @@ const debug = Debug('figolia:add-to-index');
 // @return Promise returing timestamp of last indexed object or null
 //
 const addToIndex = ({
+    ts,
     clearIndex = false,
     firebaseObjects,
     CONFIG,
@@ -38,14 +39,14 @@ const addToIndex = ({
 
     // If Firebase dataset is empty or missing, just clear the index
     if (!firebaseObjects) {
-        info(`[WARN] Firebase dataset '${dataset.path}' is empty`);
+        info(`Firebase dataset '${dataset.path}' contains no new items`);
         return indexExists({
                 indexName: dataset.index,
                 algolia
             })
             .then(indexExists => indexExists && index.clearIndex())
             .then(task => task && index.waitTask(task.taskID))
-            .then(() => null);
+            .then(() => ts);
     }
 
     // Also clear the index if asked by `clearIndex` argument

@@ -54,8 +54,12 @@ var configFile = conf || os.homedir() + '/.figolia.conf.js';
 // Load user configuration or load default config from module folder
 var CONFIG;
 try {
+
     CONFIG = require(path.resolve(configFile).replace(/.js$/, ''));
 } catch (err) {
+    if (err instanceof SyntaxError) {
+        throw err;
+    }
     CONFIG = require(path.join(__dirname, 'defaults.conf.js'));
 }
 
@@ -65,10 +69,10 @@ try {
 });
 
 // Propagate timestampField to dataset config
-if (CONFIG[timestampField]) {
+if (CONFIG['timestampField']) {
     for (var key in CONFIG.schema) {
         CONFIG.schema[key].timestampField =
-            CONFIG.schema[key].timestampField || CONFIG[timestampField];
+            CONFIG.schema[key].timestampField || CONFIG['timestampField'];
     }
 }
 
