@@ -13,7 +13,7 @@ const ngrams = str => {
     words.forEach(word => {
         // get the ngrams only down to 4 characters, otherwise pertinence fall
         for (let pos = word.length - 4; pos > 0; pos--) {
-            ngrams.push(word.slice(pos))
+            ngrams.push(word.slice(pos).toLowerCase())
         }
     });
 
