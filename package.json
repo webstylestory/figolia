@@ -1,6 +1,6 @@
 {
   "name": "figolia",
-  "version": "0.2.8",
+  "version": "0.3.0",
   "description": "⚡️  Keep your Algolia search indexes in sync with your Firebase datasets!",
   "author": "Aurélien Chivot <aurelien@webstylestory.com>",
   "license": "MIT",
@@ -43,7 +43,7 @@
     "es6-module-loader": "^0.17.10",
     "firebase": "^2.3.2",
     "firebase-token-generator": "^2.0.0",
-    "lodash": "^4.0.0",
+    "lodash": "^4.2.1",
     "path": "^0.12.7",
     "prettyjson": "^1.1.3"
   },
