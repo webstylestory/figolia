@@ -28,6 +28,7 @@ When using [Firebase](http://firebase.com) as a web or mobile backend, [Algolia]
   * [Usage](#usage)
   * [Configuration](#configuration)
       * [Firebase configuration](#firebase-configuration)
+      * [Partial word matching (*infix*) search](#partial-word-matching-infix-search)
       * [Reindexing, incremental indexing](#reindexing-incremental-indexing)
   * [Release Notes](#release-notes)
   * [Known Issues](#known-issues)
@@ -224,6 +225,7 @@ you need to specify the full path of the executable :
 
 ## Release notes
 
+ * 0.3.1 - Fix - do not clear index when relaunching
  * 0.3.0 - Add NGrams generation for middle-of-word (*infix*) search
  * 0.2.8 - Change default timestamp field name to 'updatedAt', bug fixes
  * 0.2.4 - Fix babel ignore option and config loading

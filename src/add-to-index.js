@@ -45,7 +45,7 @@ const addToIndex = ({
                 indexName: dataset.index,
                 algolia
             })
-            .then(indexExists => indexExists && index.clearIndex())
+            .then(indexExists => indexExists && !ts && index.clearIndex())
             .then(task => task && index.waitTask(task.taskID))
             .then(() => ts);
     }
