@@ -168,7 +168,7 @@ describe('Indexing a group of objects', function() {
             ));
     });
 
-    it.skip('should throw an error if services are missing', function() {
+    it('should throw an error if services are missing', function() {
 
         const args = {
             firebaseObjects,
@@ -184,7 +184,7 @@ describe('Indexing a group of objects', function() {
 
     });
 
-    it.skip('should create Algolia index, if missing', function() {
+    it('should create Algolia index, if missing', function() {
         CONFIG.schema.missingIndex = {
             timestampField: 'updatedAt',
             path: `${baseConfig.firebase.uid}/tests/testData`,
@@ -211,7 +211,7 @@ describe('Indexing a group of objects', function() {
             });
     });
 
-    it.skip('should complete Algolia index with additional data', function() {
+    it('should complete Algolia index with additional data', function() {
         CONFIG.schema.emptyPath = {
             timestampField: 'updatedAt',
             path: `${baseConfig.firebase.uid}/tests/testData`,
@@ -238,7 +238,7 @@ describe('Indexing a group of objects', function() {
     });
 
 
-    it.skip('with clearIndex option should fully resync Algolia with Firebase (standard key, all field)', function() {
+    it('with clearIndex option should fully resync Algolia with Firebase (standard key, all field)', function() {
         CONFIG.schema.standardKeys = {
             timestampField: 'updatedAt',
             path: `${baseConfig.firebase.uid}/tests/testData`,
@@ -269,7 +269,7 @@ describe('Indexing a group of objects', function() {
             });
     });
 
-    it.skip('should empty Algolia index if Firebase path is missing or empty', function() {
+    it('should empty Algolia index if Firebase path is missing or empty', function() {
         CONFIG.schema.emptyPath = {
             timestampField: 'updatedAt',
             path: `${baseConfig.firebase.uid}/tests/thisPathIsEmpty`,
@@ -295,7 +295,7 @@ describe('Indexing a group of objects', function() {
             });
     });
 
-    it.skip('should sync Algolia with Firebase (standard key, field inclusion filter)', function() {
+    it('should sync Algolia with Firebase (standard key, field inclusion filter)', function() {
         CONFIG.schema.standardKeysInclusion = {
             timestampField: 'updatedAt',
             path: `${baseConfig.firebase.uid}/tests/testData`,
@@ -365,7 +365,7 @@ describe('Indexing a group of objects', function() {
             });
     });
 
-    it.skip('should sync Algolia with Firebase (standard key, field exclusion filter)', function() {
+    it('should sync Algolia with Firebase (standard key, field exclusion filter)', function() {
         CONFIG.schema.standardKeysExclusion = {
             timestampField: 'updatedAt',
             path: `${baseConfig.firebase.uid}/tests/testData`,
@@ -401,7 +401,7 @@ describe('Indexing a group of objects', function() {
 
     });
 
-    it.skip('should sync Algolia with Firebase (standard key, field exclusion filter)', function() {
+    it('should sync Algolia with Firebase (standard key, field exclusion filter)', function() {
         CONFIG.schema.standardKeysBothclusion = {
             timestampField: 'updatedAt',
             path: `${baseConfig.firebase.uid}/tests/testData`,
@@ -438,7 +438,7 @@ describe('Indexing a group of objects', function() {
 
     });
 
-    it.skip('should sync Algolia with Firebase (custom key, all fields)', function() {
+    it('should sync Algolia with Firebase (custom key, all fields)', function() {
         CONFIG.schema.customKeys = {
             timestampField: 'updatedAt',
             path: `${baseConfig.firebase.uid}/tests/testData`,
@@ -468,7 +468,7 @@ describe('Indexing a group of objects', function() {
             });
     });
 
-    // it.skip('should keep algolia index settings when clearing index', function() {
+    // it('should keep algolia index settings when clearing index', function() {
     //     CONFIG.schema.standardKeys = {
     //         path: `${baseConfig.firebase.uid}/tests/testData`,
     //         index: `${prefix}_standard_keys`
@@ -500,7 +500,7 @@ describe('Indexing a group of objects', function() {
     //         });
     // });
 
-    it.skip('should return timestamp of last object', function() {
+    it('should return timestamp of last object', function() {
         CONFIG.schema.standardKeys = {
             timestampField: 'updatedAt',
             path: `${baseConfig.firebase.uid}/tests/testData`,
@@ -523,7 +523,7 @@ describe('Indexing a group of objects', function() {
             });
     });
 
-    // it.skip('should index only recent items, and return timestamp of last object (timestamp provided)', function() {
+    // it('should index only recent items, and return timestamp of last object (timestamp provided)', function() {
     //     CONFIG.schema.standardKeysTs = {
     //         path: `${baseConfig.firebase.uid}/tests/testData`,
     //         index: `${prefix}_standard_keys_timestamp`
@@ -561,7 +561,7 @@ describe('Indexing a group of objects', function() {
     //         });
     // });
 
-    // it.skip('should index only recent items, if timestamp provided', function() {
+    // it('should index only recent items, if timestamp provided', function() {
     //     CONFIG.schema.standardKeysTs = {
     //         path: `${baseConfig.firebase.uid}/tests/testData`,
     //         index: `${prefix}_standard_keys_timestamp`
@@ -599,7 +599,7 @@ describe('Indexing a group of objects', function() {
     //         });
     // });
 
-    it.skip('should store last object timestamp', function() {
+    it('should store last object timestamp', function() {
         CONFIG.schema.standardKeys = {
             timestampField: 'updatedAt',
             path: `${baseConfig.firebase.uid}/tests/testData`,
