@@ -18,6 +18,7 @@ When using [Firebase](http://firebase.com) as a web or mobile backend, [Algolia]
   * All CRUD Firebase operations reflected in Algolia 
   * Restarts from last indexing timestamp the next time it's launched
   * Throttle indexing to limit Algolia API calls
+  * Make middle-of-word (*infix*) search possible
 
 
 ---
@@ -134,7 +135,16 @@ Copy the `defaults.conf.js` and modify it according to your needs, before runnin
                 excludeFields: [
                     'passwdHash',
                     'private'
-                ]
+                ],
+                // Optional, list of fields for which you need N-Gram tokens
+                // ex. "username: 'hermione'", will also create an additional
+                // field "usernameNGrams: ['ermione', 'rmione', 'mione', 'ione']"
+                // for each word (down to 4 chars), making *infix* search possible 
+                // in addition to default prefix search available in Algolia out of the box
+                // letting users search with keyword "mione"
+                // Note: this can be storage-consumming for long fields, use with 
+                //       caution ! (preferably on fields with enforced size)
+                ngrams: ['username']
             },
             todoItems: {
                 // Second example dataset to index, minimal config
@@ -152,6 +162,19 @@ In order for `figolia` to work properly, it must store
 the last known indexing date in firebase. You can specify the path where you
 want this information stored in the config ([see above](#configuration)). 
 Default is to use the path named `figolia` at the root of your Firebase reference.
+
+
+### Partial word matching (*infix* search)
+
+
+[Out of the box, Algolia only suports *prefix* search by design.](https://www.algolia.com/doc/faq/toubleshooting/how-can-i-make-queries-within-the-middle-of-a-word) However, this can be mitigated by generating *N-Grams* of the words
+up to 4 characters (otherwise relevance falls too much). Figolia does this for you!
+
+Example: activating the `ngrams` on `username` field will generate, for the 
+value `hermione`, the following tokens: `['ermione', 'rmione', 'mione', 'ione']`. 
+
+As a consequence, users can find Hermione with 'mione' keyword, which would sadly 
+return no results otherwise. 
 
 
 ### Reindexing, incremental indexing
@@ -201,6 +224,7 @@ you need to specify the full path of the executable :
 
 ## Release notes
 
+ * 0.3.0 - Add NGrams generation for middle-of-word (*infix*) search
  * 0.2.8 - Change default timestamp field name to 'updatedAt', bug fixes
  * 0.2.4 - Fix babel ignore option and config loading
  * 0.2.0 - Add throttle option to limit API calls

@@ -66,7 +66,16 @@ var CONFIG = {
 //             excludeFields: [
 //                 'passwdHash',
 //                 'private'
-//             ]
+//             ],
+//             // Optional, list of fields for which you need N-Gram tokens
+//             // ex. "username: 'hermione'", will also create an additional
+//             // field "usernameNGrams: ['ermione', 'rmione', 'mione', 'ione', 'one']"
+//             // for each word (down to 3 chars), making *infix* search possible
+//             // in addition to default prefix search available in Algolia out of the box
+//             // letting users search with keyword "mione"
+//             // Note: this can be storage-consumming for long fields, use with
+//             //       caution ! (preferably on fields with enforced size)
+//             ngrams: ['username']
 //         },
 //         todoItems: {
 //             // Second example dataset to index

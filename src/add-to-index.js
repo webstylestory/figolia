@@ -8,6 +8,7 @@ import prettyjson from 'prettyjson';
 import Promise from 'bluebird';
 
 import indexExists from './index-exists.js';
+import ngrams from './ngrams.js';
 
 const info = Debug('figolia:info:add-to-index');
 const debug = Debug('figolia:add-to-index');
@@ -67,6 +68,14 @@ const addToIndex = ({
             if (dataset.excludeFields) {
                 // Exclude defined fields in configuration
                 fbObject = _omit(fbObject, dataset.excludeFields);
+            }
+            if (dataset.ngrams) {
+                dataset.ngrams.forEach(ngram => {
+                    if (fbObject[ngram + 'NGrams']) {
+                        throw new Error(`NGrams field of ${ngram} already exists`);
+                    }
+                    fbObject[ngram + 'NGrams'] = ngrams(fbObject[ngram]);
+                });
             }
             // Algolia's objectID as per config, or default key.
             // We use `firebaseObjects[key]` here instead of `fbObject`,
