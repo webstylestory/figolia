@@ -48,29 +48,27 @@ const algoliaFixtures = [
 // };
 
 const firebaseObjects = {
-    // tests: {
-        // thisPathIsEmpty: {},
-        // testData: {
-            defaultKey1: {
-                text: 'previously indexed object',
-                customId: 'customKey1',
-                numberField: 42,
-                updatedAt: now - 200
-            },
-            defaultKey2: {
-                text: 'first new object',
-                customId: 'customKey2',
-                numberField: 42,
-                updatedAt: now - 100
-            },
-            defaultKey3: {
-                text: 'earliest new object',
-                customId: 'customKey3',
-                numberField: 42,
-                updatedAt: now
-            }
-        // }
-    // }
+    defaultKey1: {
+        text: 'previously indexed object',
+        textNGrams: 'whatever',
+        customId: 'customKey1',
+        numberField: 42,
+        updatedAt: now - 200
+    },
+    defaultKey2: {
+        text: 'first new object',
+        textNGrams: 'whatever',
+        customId: 'customKey2',
+        numberField: 42,
+        updatedAt: now - 100
+    },
+    defaultKey3: {
+        text: 'earliest new object',
+        textNGrams: 'whatever',
+        customId: 'customKey3',
+        numberField: 42,
+        updatedAt: now
+    }
 };
 
 
@@ -262,7 +260,7 @@ describe('Indexing a group of objects', function() {
 
                 expect(res.nbHits).to.equal(3);
                 // There is `_highlightResult` field in addition to object fileds
-                expect(Object.keys(res.hits[0])).to.have.length(6);
+                expect(Object.keys(res.hits[0])).to.have.length(7);
                 expect(res.hits[0]).to.have.property('objectID')
                     .that.match(/default/);
 
@@ -318,7 +316,7 @@ describe('Indexing a group of objects', function() {
             .then(res => {
 
                 expect(res.nbHits).to.equal(3);
-                // Only 3 fields, including `_highlightResult`
+                // Only 4 fields, including ObjctID and `_highlightResult`
                 expect(Object.keys(res.hits[0])).to.have.length(4);
                 expect(res.hits[0]).to.not.have.property('customId');
                 expect(res.hits[0]).to.not.have.property('updatedAt');
@@ -353,7 +351,7 @@ describe('Indexing a group of objects', function() {
             .then(() => index.search('ject'))
             .then(res => {
 
-                expect(res.hits[0]).to.have.property('textNGrams');
+                expect(res.hits[0]).to.have.property('textNGramsDUP');
                 expect(res.nbHits).to.equal(3);
 
                 return index.search('vious')
@@ -362,7 +360,7 @@ describe('Indexing a group of objects', function() {
 
                 expect(res.nbHits).to.equal(1);
 
-            });
+            })
     });
 
     it('should sync Algolia with Firebase (standard key, field exclusion filter)', function() {
@@ -388,8 +386,8 @@ describe('Indexing a group of objects', function() {
             .then(res => {
 
                 expect(res.nbHits).to.equal(3);
-                // Only 3 fields, including `_highlightResult`
-                expect(Object.keys(res.hits[0])).to.have.length(4);
+                // 5 fields, including `_highlightResult`
+                expect(Object.keys(res.hits[0])).to.have.length(5);
                 expect(res.hits[0]).to.not.have.property('text');
                 expect(res.hits[0]).to.not.have.property('numberField');
                 expect(res.hits[0]).to.have.property('customId');
@@ -461,7 +459,7 @@ describe('Indexing a group of objects', function() {
             .then(res => {
 
                 expect(res.nbHits).to.equal(3);
-                expect(Object.keys(res.hits[0])).to.have.length(6);
+                expect(Object.keys(res.hits[0])).to.have.length(7);
                 expect(res.hits[0]).to.have.property('objectID')
                     .that.match(/custom/);
 

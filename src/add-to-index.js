@@ -71,10 +71,11 @@ const addToIndex = ({
             }
             if (dataset.ngrams) {
                 dataset.ngrams.forEach(ngram => {
-                    if (fbObject[ngram + 'NGrams']) {
-                        throw new Error(`NGrams field of ${ngram} already exists`);
+                    let prefix = 'NGrams';
+                    while (!!fbObject[ngram + prefix]) {
+                        prefix += 'DUP';
                     }
-                    fbObject[ngram + 'NGrams'] = ngrams(fbObject[ngram]);
+                    fbObject[ngram + prefix] = ngrams(fbObject[ngram]);
                 });
             }
             // Algolia's objectID as per config, or default key.
