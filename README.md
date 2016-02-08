@@ -238,13 +238,11 @@ you need to specify the full path of the executable :
 ## Known issues
 
 
-  * [#15](#15) If relaunching indexing after a previous one, with timestamp
-    stored in Firebase, removed items since then will not be removed from index. 
-    Workaround is to delete timestamp in `algolia/index` backend in Firebase to 
-    force a full reindex. A fix would enable reflecting deletions in the index, but 
-    the small updates would remain unnoticed, so if your database stay wuthout
-    indexing for too long, a full reindex is the most adequate option.
-
+  * [#15](#15) When figolia server stops running, your Firebase can continue to
+    change. Next time you run figolia, it will pickup the changes (well, if you 
+    have the `timestampField` option correctly set up), however, it will not see 
+    if items have been deleted. **Workaround is to fully reindex the datasets.** 
+    The fix (TODO) will be to list all object ID and remove the extraneous ones.
 
 
 ## Developers
