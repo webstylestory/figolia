@@ -1,6 +1,6 @@
 {
   "name": "figolia",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "⚡️  Keep your Algolia search indexes in sync with your Firebase datasets!",
   "author": "Aurélien Chivot <aurelien@webstylestory.com>",
   "license": "MIT",
@@ -49,7 +49,7 @@
   },
   "devDependencies": {
     "babel-cli": "^6.4.5",
-    "babel-istanbul": "^0.6.0",
+    "babel-istanbul": "^0.7.0",
     "chai": "^3.4.1",
     "coveralls": "^2.11.6",
     "mocha": "^2.3.4"
