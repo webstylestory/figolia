@@ -121,11 +121,11 @@ Copy the `defaults.conf.js` and modify it according to your needs, before runnin
                 // Optional, name of ID field (otherwise,
                 // the Firebase object key will be used)
                 key: 'id',
-                // Optional, list of fields to index
-                // (otherwise, every field will be indexed)
                 // Optional, dataset-specific update time field
                 // (default is use global setting above)
                 timestampField: 'createdAt',
+                // Optional, list of fields to index
+                // (otherwise, every field will be indexed)
                 includeFields: [
                     'name',
                     'updatedAt'
@@ -145,7 +145,7 @@ Copy the `defaults.conf.js` and modify it according to your needs, before runnin
                 // letting users search with keyword "mione"
                 // Note: this can be storage-consumming for long fields, use with 
                 //       caution ! (preferably on fields with enforced size)
-                ngrams: ['username']
+                ngrams: ['username', 'profile.fullname']
             },
             todoItems: {
                 // Second example dataset to index, minimal config
@@ -225,6 +225,7 @@ you need to specify the full path of the executable :
 
 ## Release notes
 
+ * 0.3.2 - NGrams can be nested objects like `'prop.subprop'`
  * 0.3.1 - Fix - do not clear index when relaunching
  * 0.3.0 - Add NGrams generation for middle-of-word (*infix*) search
  * 0.2.8 - Change default timestamp field name to 'updatedAt', bug fixes
