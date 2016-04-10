@@ -1,5 +1,6 @@
 import Debug from 'debug';
 import {
+    get as _get,
     maxBy as _maxBy,
     omit as _omit,
     pick as _pick,
@@ -75,7 +76,7 @@ const addToIndex = ({
                     while (!!fbObject[ngram + prefix]) {
                         prefix += 'DUP';
                     }
-                    fbObject[ngram + prefix] = ngrams(fbObject[ngram]);
+                    fbObject[ngram + prefix] = ngrams(_get(fbObject, ngram));
                 });
             }
             // Algolia's objectID as per config, or default key.
