@@ -135,7 +135,7 @@ Copy the `defaults.conf.js` and modify it according to your needs, before runnin
                 // is applied *after* `includeFields`
                 excludeFields: [
                     'passwdHash',
-                    'private'
+                    'nested.privateProp'
                 ],
                 // Optional, list of fields for which you need N-Gram tokens
                 // ex. "username: 'hermione'", will also create an additional
