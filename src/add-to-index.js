@@ -4,6 +4,7 @@ import {
     maxBy as _maxBy,
     omit as _omit,
     pick as _pick,
+    unset as _unset,
     values as _values } from 'lodash';
 import prettyjson from 'prettyjson';
 import Promise from 'bluebird';
@@ -68,7 +69,9 @@ const addToIndex = ({
             }
             if (dataset.excludeFields) {
                 // Exclude defined fields in configuration
-                fbObject = _omit(fbObject, dataset.excludeFields);
+                dataset.excludeFields.forEach(field => {
+                    _unset(fbObject, field);
+                });
             }
             if (dataset.ngrams) {
                 dataset.ngrams.forEach(ngram => {
@@ -84,6 +87,9 @@ const addToIndex = ({
             // in case the custom key is not beyond included fields.
             fbObject.objectID = dataset.key ?
                 _get(firebaseObjects[key], dataset.key) : key;
+            if (!fbObject.objectID) {
+                throw new Error('Object key not found at ' + dataset.key);
+            }
 
             objectsToIndex.push(fbObject);
         }
