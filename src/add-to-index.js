@@ -83,7 +83,7 @@ const addToIndex = ({
             // We use `firebaseObjects[key]` here instead of `fbObject`,
             // in case the custom key is not beyond included fields.
             fbObject.objectID = dataset.key ?
-                firebaseObjects[key][dataset.key] : key;
+                _get(firebaseObjects[key], dataset.key) : key;
 
             objectsToIndex.push(fbObject);
         }

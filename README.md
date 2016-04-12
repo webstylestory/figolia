@@ -225,6 +225,7 @@ you need to specify the full path of the executable :
 
 ## Release notes
 
+ * 0.3.3 - Object key can be nested object like `'prop.id`'
  * 0.3.2 - NGrams can be nested objects like `'prop.subprop'`
  * 0.3.1 - Fix - do not clear index when relaunching
  * 0.3.0 - Add NGrams generation for middle-of-word (*infix*) search
