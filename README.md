@@ -225,6 +225,7 @@ you need to specify the full path of the executable :
 
 ## Release notes
 
+ * 0.3.5 - Optimize ngrams storage by grouping multiple fields and deduplicating 
  * 0.3.4 - throw is key does not exists. excludedFields can be nested prop
  * 0.3.3 - Object key can be nested prop: `'prop.id`'
  * 0.3.2 - NGrams can be nested prop: `'prop.nested'`

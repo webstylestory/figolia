@@ -5,6 +5,7 @@ import {
     omit as _omit,
     pick as _pick,
     unset as _unset,
+    uniq as _uniq,
     values as _values } from 'lodash';
 import prettyjson from 'prettyjson';
 import Promise from 'bluebird';
@@ -74,13 +75,16 @@ const addToIndex = ({
                 });
             }
             if (dataset.ngrams) {
+                let ngramsArray = [];
                 dataset.ngrams.forEach(ngram => {
-                    let prefix = 'NGrams';
-                    while (!!fbObject[ngram + prefix]) {
-                        prefix += 'DUP';
-                    }
-                    fbObject[ngram + prefix] = ngrams(_get(fbObject, ngram));
+                    ngramsArray = ngramsArray.concat(ngrams(_get(fbObject, ngram)));
                 });
+                let field = 'ngrams';
+                while (!!fbObject[field]) {
+                    field += 'Figolia';
+                }
+                fbObject[field] = _uniq(ngramsArray);
+
             }
             // Algolia's objectID as per config, or default key.
             // We use `firebaseObjects[key]` here instead of `fbObject`,

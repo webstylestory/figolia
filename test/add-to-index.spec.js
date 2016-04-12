@@ -50,21 +50,21 @@ const algoliaFixtures = [
 const firebaseObjects = {
     defaultKey1: {
         text: 'previously indexed object',
-        textNGrams: 'whatever',
+        ngrams: 'whatever',
         customId: 'customKey1',
         numberField: 42,
         updatedAt: now - 200
     },
     defaultKey2: {
         text: 'first new object',
-        textNGrams: 'whatever',
+        ngrams: 'whatever',
         customId: 'customKey2',
         numberField: 42,
         updatedAt: now - 100
     },
     defaultKey3: {
         text: 'earliest new object',
-        textNGrams: 'whatever',
+        ngrams: 'whatever',
         customId: 'customKey3',
         numberField: 42,
         updatedAt: now
@@ -351,7 +351,7 @@ describe('Indexing a group of objects', function() {
             .then(() => index.search('ject'))
             .then(res => {
 
-                expect(res.hits[0]).to.have.property('textNGramsDUP');
+                expect(res.hits[0]).to.have.property('ngramsFigolia');
                 expect(res.nbHits).to.equal(3);
 
                 return index.search('vious')
