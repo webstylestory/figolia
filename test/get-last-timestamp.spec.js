@@ -62,15 +62,15 @@ describe('Get last indexing timestamp of dataset', function() {
         };
 
         return getLastTimestamp({
-                CONFIG: invalidConfig,
-                dataset: {},
-                fb
-            })
-            .then(ts => {
+            CONFIG: invalidConfig,
+            dataset: {},
+            fb
+        })
+        .then(ts => {
 
-                expect(ts).to.be.null;
+            expect(ts).to.be.null;
 
-            });
+        });
 
     });
 
@@ -102,7 +102,7 @@ describe('Get last indexing timestamp of dataset', function() {
 
                 expect(ts).to.equal(now);
 
-            })
+            });
     });
 
 });

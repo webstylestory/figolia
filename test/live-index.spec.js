@@ -12,7 +12,7 @@ const waitFor = seconds => {
     let deferred = Promise.defer();
     setTimeout(deferred.resolve.bind(deferred), seconds * 1000);
     return deferred.promise;
-}
+};
 
 // Environment variables must be provided for the tests to work
 

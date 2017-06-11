@@ -1,4 +1,4 @@
-/*eslint-disable */
+/* eslint-disable */
 //
 // algolia-firebase-indexer main config file
 // -----------------------------------------
@@ -6,9 +6,10 @@
 // You must modify this file before running the server
 //
 // Mandatory information is :
-//   * You Algolia and Firebase keys
+//   * You Algolia keys and Firebase service account
 //   * The schema/indexes you want to sync
 //
+
 
 var CONFIG = {
     // Firebase credentials

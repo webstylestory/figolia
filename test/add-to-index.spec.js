@@ -230,7 +230,7 @@ describe('Indexing a group of objects', function() {
             .then(() => index.search())
             .then(res => {
 
-                expect(res.nbHits).to.equal(4)
+                expect(res.nbHits).to.equal(4);
 
             });
     });
@@ -288,7 +288,7 @@ describe('Indexing a group of objects', function() {
             .then(() => index.search())
             .then(res => {
 
-                expect(res.nbHits).to.equal(0)
+                expect(res.nbHits).to.equal(0);
 
             });
     });
@@ -354,13 +354,13 @@ describe('Indexing a group of objects', function() {
                 expect(res.hits[0]).to.have.property('ngramsFigolia');
                 expect(res.nbHits).to.equal(3);
 
-                return index.search('vious')
+                return index.search('vious');
             })
             .then(res => {
 
                 expect(res.nbHits).to.equal(1);
 
-            })
+            });
     });
 
     it('should sync Algolia with Firebase (standard key, field exclusion filter)', function() {
@@ -621,7 +621,7 @@ describe('Indexing a group of objects', function() {
 
                 expect(res.val()).to.equal(now);
 
-            })
+            });
     });
 
 });

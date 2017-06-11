@@ -11,19 +11,19 @@ const debug = Debug('figolia:remove-from-index');
 //
 const removeFromIndex = ({ firebaseObjects, CONFIG, dataset, fb, algolia }) => {
 
-  let objectIDs = [];
-  for (let key in firebaseObjects) {
-    objectIDs.push(dataset.key ? firebaseObjects[key][dataset.key] : key);
-  }
+    let objectIDs = [];
+    for (let key in firebaseObjects) {
+        objectIDs.push(dataset.key ? firebaseObjects[key][dataset.key] : key);
+    }
 
-  info(`Removing ${objectIDs.length} items from ${dataset.path}`);
+    info(`Removing ${objectIDs.length} items from ${dataset.path}`);
 
-  const index = algolia.initIndex(dataset.index);
+    const index = algolia.initIndex(dataset.index);
 
-  // Remove the object from Algolia
-  return index.deleteObjects(objectIDs)
-    .then(task => index.waitTask(task.taskID))
-    .then(() => debug(`Done removing ${objectIDs.length} items from ${dataset.path}`))
+    // Remove the object from Algolia
+    return index.deleteObjects(objectIDs)
+        .then(task => index.waitTask(task.taskID))
+        .then(() => debug(`Done removing ${objectIDs.length} items from ${dataset.path}`));
 
 };
 

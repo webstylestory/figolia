@@ -36,7 +36,7 @@ const reindex = ({ ts, CONFIG, dataset, fb, algolia }) => {
             dataset,
             fb,
             algolia
-        }))
+        }));
 };
 
 export default reindex;

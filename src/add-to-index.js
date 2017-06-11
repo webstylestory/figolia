@@ -45,12 +45,12 @@ const addToIndex = ({
     if (!firebaseObjects) {
         info(`Firebase dataset '${dataset.path}' contains no new items`);
         return indexExists({
-                indexName: dataset.index,
-                algolia
-            })
-            .then(indexExists => indexExists && !ts && index.clearIndex())
-            .then(task => task && index.waitTask(task.taskID))
-            .then(() => ts);
+            indexName: dataset.index,
+            algolia
+        })
+        .then(indexExists => indexExists && !ts && index.clearIndex())
+        .then(task => task && index.waitTask(task.taskID))
+        .then(() => ts);
     }
 
     // Also clear the index if asked by `clearIndex` argument
@@ -130,7 +130,7 @@ const addToIndex = ({
         })
         // Store last timestamp, if available, for future reference
         .then(() => {
-            let lastObject = _maxBy(_values(firebaseObjects), dataset.timestampField)
+            let lastObject = _maxBy(_values(firebaseObjects), dataset.timestampField);
             let ts = lastObject[dataset.timestampField] || null;
 
             return fb.child(`${CONFIG.firebase.uid}/${dataset.index}/ts`)

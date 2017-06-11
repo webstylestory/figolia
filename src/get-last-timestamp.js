@@ -1,5 +1,4 @@
 import Promise from 'bluebird';
-
 import Debug from './debug';
 
 const info = Debug('figolia:info:get-last-timestamp');
@@ -24,7 +23,7 @@ const getLastTimestamp = ({ CONFIG, dataset, fb }) => {
                 fbRef.val() ?
                 `Timestamp for index ${dataset.index}: ${ts}` :
                 `Timestamp not found for index ${dataset.index}`
-            )
+            );
             return ts;
         });
 

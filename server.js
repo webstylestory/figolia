@@ -1,4 +1,4 @@
-/*eslint-disable */
+/* eslint-disable */
 
 // Enable loading ES2016 files with babel
 require('babel-register')({
@@ -79,15 +79,11 @@ if (CONFIG['timestampField']) {
 // Launch server
 main(CONFIG)
     .then(() => {
-
         // Exit program except if live indexing was started
         if (!CONFIG.liveIndex) {
             process.exit(0);
         }
-
     })
     .catch(err => {
-
         throw new Error(`[ERROR] ${err}`);
-
     });

@@ -27,7 +27,7 @@ const CONFIG = {
     schema: {
         test: {
             timestampField: 'updatedAt',
-            path: `algolia/tests/testData`,
+            path: 'algolia/tests/testData',
             index: `${prefix}_test`
         }
     }
@@ -87,12 +87,12 @@ describe('Object removal from Algolia index', function() {
     it('should throw an error if services are missing', function() {
 
         expectCalling(removeFromIndex).withArgs({
-                firebaseObjects: {},
-                CONFIG,
-                dataset: { path: 'any' },
-                fb,
-                algolia: null
-            }).to.throw(Error)
+            firebaseObjects: {},
+            CONFIG,
+            dataset: { path: 'any' },
+            fb,
+            algolia: null
+        }).to.throw(Error);
 
     });
 
@@ -101,18 +101,18 @@ describe('Object removal from Algolia index', function() {
         const index = algolia.initIndex(CONFIG.schema.test.index);
 
         return removeFromIndex({
-                firebaseObjects: { keyMissing: {} },
-                CONFIG,
-                dataset: CONFIG.schema.test,
-                fb,
-                algolia
-            })
-            .then(() => index.search('champagne'))
-            .then(res => {
+            firebaseObjects: { keyMissing: {} },
+            CONFIG,
+            dataset: CONFIG.schema.test,
+            fb,
+            algolia
+        })
+        .then(() => index.search('champagne'))
+        .then(res => {
 
-                expect(res.nbHits).to.equal(2);
+            expect(res.nbHits).to.equal(2);
 
-            });
+        });
     });
 
     it('should remove object if found in index', function() {
@@ -120,18 +120,18 @@ describe('Object removal from Algolia index', function() {
         const index = algolia.initIndex(CONFIG.schema.test.index);
 
         return removeFromIndex({
-                firebaseObjects: { 'defaultKey1': {} },
-                CONFIG,
-                dataset: CONFIG.schema.test,
-                fb,
-                algolia
-            })
-            .then(() => index.search('champagne'))
-            .then(res => {
+            firebaseObjects: { 'defaultKey1': {} },
+            CONFIG,
+            dataset: CONFIG.schema.test,
+            fb,
+            algolia
+        })
+        .then(() => index.search('champagne'))
+        .then(res => {
 
-                expect(res.nbHits).to.equal(1);
+            expect(res.nbHits).to.equal(1);
 
-            });
+        });
     });
 
 });

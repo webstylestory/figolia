@@ -72,27 +72,27 @@ describe('Checking existence of an Algolia index', function() {
     it('should detect an existing index', function() {
 
         return indexExists({
-                indexName: `${prefix}_test_index`,
-                algolia
-            })
-            .then(indexExists => {
+            indexName: `${prefix}_test_index`,
+            algolia
+        })
+        .then(indexExists => {
 
-                expect(indexExists).to.equal(true);
+            expect(indexExists).to.equal(true);
 
-            });
+        });
     });
 
     it('should detect an non-existing index', function() {
 
         return indexExists({
-                indexName: `${prefix}_test_index_does_not_exists`,
-                algolia
-            })
-            .then(indexExists => {
+            indexName: `${prefix}_test_index_does_not_exists`,
+            algolia
+        })
+        .then(indexExists => {
 
-                expect(indexExists).to.equal(false);
+            expect(indexExists).to.equal(false);
 
-            });
+        });
     });
 
 });

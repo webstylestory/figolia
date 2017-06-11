@@ -154,7 +154,7 @@ describe('Calling main program', function() {
 
             });
 
-    })
+    });
 
     it('should clear and resync Firebase to existing index, without timestamp field', function() {
 
@@ -173,7 +173,7 @@ describe('Calling main program', function() {
 
             });
 
-    })
+    });
 
     it('with timestampField, should sync Algolia index with Firebase data and store timestamp', function() {
 

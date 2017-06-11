@@ -15,7 +15,7 @@ const indexExists = ({ indexName, algolia }) => {
         );
 
         return indexFound !== -1;
-    })
+    });
 };
 
 export default indexExists;
