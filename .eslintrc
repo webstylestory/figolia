@@ -1,13 +1,5 @@
 {
     "parser": "babel-eslint",
-    "rules": {
-        "indent": [2, 4],
-        "quotes": [2, "single"],
-        "linebreak-style": [2, "unix"],
-        "semi": [2, "always"],
-        "no-console": 0,
-        "no-debugger": 0
-    },
     "ecmaFeatures": {
         "arrowFunctions": true,
         "blockBindings": true,
@@ -26,24 +18,28 @@
     "rules": {
         "camelcase": 0,
         "curly": 1,
-        "no-alert": 0,
-        "no-else-return": 1,
-        "strict": [1, "global"],
         "comma-style": [1, "last"],
+        "indent": [2, 4],
+        "linebreak-style": [2, "unix"],
+        "new-cap": 0,
+        "no-alert": 0,
+        "no-console": 0,
+        "no-debugger": 0,
+        "no-duplicate-case": 0,
+        "no-else-return": 1,
+        "no-func-assign": 0,
         "no-lonely-if": 1,
         "no-multi-spaces": [1, { "exceptions": { "VariableDeclarator": true } }],
         "no-mixed-requires": 1,
         "no-underscore-dangle": 0,
         "no-var": 1,
-        "no-duplicate-case": 0,
-        "no-func-assign": 0,
-        "quotes": [1, "single", "avoid-escape"],
-        "space-before-function-paren": [1, "never"],
-        "space-after-keywords": [1, "always"],
-        "space-before-blocks": [1, "always"],
         "object-curly-spacing": [1, "always"],
+        "quotes": [1, "single", "avoid-escape"],
+        "semi": [2, "always"],
+        "space-before-function-paren": [1, "never"],
+        "space-before-blocks": [1, "always"],
         "spaced-comment": [1, "always"],
-        "new-cap": 0
+        "strict": [1, "global"]
     },
     "globals": {
     }
