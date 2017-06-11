@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 
+import { fb, algolia } from '../src/init-services';
 import removeFromIndex from '../src/remove-from-index';
-import initServices from '../src/init-services';
 
 // Helper function to `expect` functions with args
 // Usage : `expectCalling(myFunc).withArgs('badArg').to.throw(/gtfo/)`
@@ -60,17 +60,13 @@ describe('Object removal from Algolia index', function() {
 
     let fb, algolia;
 
-    before('Initialize services, setup Algolia and Firebase test data', function() {
+    before('Setup Algolia and Firebase test data', function() {
 
-        // Init services and test data
-        return initServices(CONFIG).then(services => {
-            algolia = services.algolia;
-            fb = services.fb;
-            const index = algolia.initIndex(CONFIG.schema.test.index);
+        // Init test data
+        const index = algolia.initIndex(CONFIG.schema.test.index);
 
-            return index.saveObjects(algoliaFixtures)
-                .then(task => index.waitTask(task.taskID));
-        });
+        return index.saveObjects(algoliaFixtures)
+            .then(task => index.waitTask(task.taskID));
 
     });
 

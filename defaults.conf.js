@@ -15,7 +15,7 @@ var CONFIG = {
     // Firebase credentials
     firebase: {
         instance: process.env.FIREBASE_INSTANCE || 'TO_BE_CHANGED',
-        secret: process.env.FIREBASE_SECRET || 'TO_BE_CHANGED',
+        serviceAccountFile: process.env.FIREBASE_ACCCONT || 'TO_BE_CHANGED',
         // Where to store server metadata
         path: process.env.FIREBASE_PATH || 'algolia',
         // Firebase token will be generated with this uid (to write above path)

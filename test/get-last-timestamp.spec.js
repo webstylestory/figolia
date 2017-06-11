@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import initServices from '../src/init-services';
+import { fb, algolia } from '../src/init-services';
 import getLastTimestamp from '../src/get-last-timestamp';
 
 // Environment variables must be provided for the tests to work
@@ -11,7 +11,7 @@ const prefix = `ALGOLIA_FIREBASE_INDEXER_TEST_${now}`;
 const CONFIG = {
     firebase: {
         instance: process.env.FIREBASE_INSTANCE,
-        secret: process.env.FIREBASE_SECRET,
+        accountServiceFile: process.env.FIREBASE_ACCOUNT,
         path: process.env.FIREBASE_PATH || 'algolia',
         uid: process.env.FIREBASE_UID || 'algolia'
     },
@@ -34,16 +34,11 @@ describe('Get last indexing timestamp of dataset', function() {
 
     let fb;
 
-    before('Initialize services, setup Firebase test data', function() {
+    before('Setup Firebase test data', function() {
 
-        // Init services
-        return initServices(CONFIG)
-            .then(services => {
-                fb = services.fb;
-                return fb
-                    .child(`${CONFIG.firebase.uid}/${prefix}_test_set`)
-                    .set({ ts: now });
-            });
+        return fb
+            .child(`${CONFIG.firebase.uid}/${prefix}_test_set`)
+            .set({ ts: now });
 
     });
 

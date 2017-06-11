@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import initServices from '../src/init-services';
+import { fb, algolia } from '../src/init-services';
 import indexExists from '../src/index-exists.js';
 
 // Environment variables must be provided for the tests to work
@@ -8,7 +8,7 @@ import indexExists from '../src/index-exists.js';
 const config = {
     firebase: {
         instance: process.env.FIREBASE_INSTANCE,
-        secret: process.env.FIREBASE_SECRET,
+        accountServiceFile: process.env.FIREBASE_ACCOUNT,
         path: process.env.FIREBASE_PATH || 'algolia',
         uid: process.env.FIREBASE_UID || 'algolia'
     },
@@ -46,16 +46,13 @@ describe('Checking existence of an Algolia index', function() {
 
     let algolia;
 
-    before('Initialize services, setup Algolia test data', function() {
+    before('Setup Algolia test data', function() {
 
-        // Init services and test data
-        return initServices(config).then(services => {
-            algolia = services.algolia;
-            const index = algolia.initIndex(`${prefix}_test_index`);
+        // Init test data
+        const index = algolia.initIndex(`${prefix}_test_index`);
 
-            return index.saveObjects(algoliaFixtures)
-                .then(task => index.waitTask(task.taskID));
-        })
+        return index.saveObjects(algoliaFixtures)
+            .then(task => index.waitTask(task.taskID));
 
     });
 

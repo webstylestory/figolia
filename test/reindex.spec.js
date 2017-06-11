@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { maxBy as _maxBy } from 'lodash';
 import prettyjson from 'prettyjson';
 
-import initServices from '../src/init-services';
+import { fb, algolia } from '../src/init-services';
 import reindex from '../src/reindex.js';
 
 // Environment variables must be provided for the tests to work
@@ -13,7 +13,7 @@ const prefix = `ALGOLIA_FIREBASE_INDEXER_TEST_${now}`;
 const CONFIG = {
     firebase: {
         instance: process.env.FIREBASE_INSTANCE,
-        secret: process.env.FIREBASE_SECRET,
+        accountServiceFile: process.env.FIREBASE_ACCOUNT,
         path: process.env.FIREBASE_PATH || 'algolia',
         uid: process.env.FIREBASE_UID || 'algolia'
     },
@@ -82,21 +82,17 @@ describe('Indexing a Firebase dataset', function() {
 
     let fb, algolia;
 
-    before('Initialize services, setup Algolia and Firebase test data', function() {
+    before('Setup Algolia and Firebase test data', function() {
 
-        // Init services and test data
-        return initServices(CONFIG).then(services => {
-            fb = services.fb;
-            algolia = services.algolia;
-            const index = algolia.initIndex(`${prefix}_standard_keys`);
+        // Init test data
+        const index = algolia.initIndex(`${prefix}_standard_keys`);
 
-            return index.saveObjects(algoliaFixtures)
-                .then(task => index.waitTask(task.taskID))
-                .then(() => fb
-                    .child(`${CONFIG.firebase.uid}`)
-                    .set(firebaseFixtures)
-                );
-        });
+        return index.saveObjects(algoliaFixtures)
+            .then(task => index.waitTask(task.taskID))
+            .then(() => fb
+                .child(`${CONFIG.firebase.uid}`)
+                .set(firebaseFixtures)
+            );
 
     });
 

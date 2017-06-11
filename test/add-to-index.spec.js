@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { maxBy as _maxBy } from 'lodash';
 
-import initServices from '../src/init-services';
+import { fb, algolia } from '../src/init-services';
 import addToIndex from '../src/add-to-index';
 import indexExists from '../src/index-exists.js';
 
@@ -15,7 +15,7 @@ let expectCalling = func => ({ withArgs: (...args) => expect(() => func(...args)
 const baseConfig = {
     firebase: {
         instance: process.env.FIREBASE_INSTANCE,
-        secret: process.env.FIREBASE_SECRET,
+        accountServiceFile: process.env.FIREBASE_ACCOUNT,
         path: process.env.FIREBASE_PATH || 'algolia',
         uid: process.env.FIREBASE_UID || 'algolia'
     },
@@ -82,29 +82,12 @@ describe('Indexing a group of objects', function() {
 
     let fb, algolia, CONFIG = baseConfig;
 
-    before('Initialize services, setup Algolia and Firebase test data', function() {
+    before('Setup Algolia and Firebase test data', function() {
 
-        // Init services and test data
-        return initServices(baseConfig).then(services => {
-            fb = services.fb;
-            algolia = services.algolia;
-            const index = algolia.initIndex(`${prefix}_standard_keys`);
-
-            return index.saveObjects(algoliaFixtures)
-                .then(task => index.waitTask(task.taskID));
-
-            // return Promise.all([
-            //         index.setSettings(algoliaSettings),
-            //         index.saveObjects(algoliaFixtures)
-            //     ])
-            //     .then(tasks => {
-            //         // Only wait th last item for faster processing
-            //         let lastTask = _maxBy(tasks, 'taskID');
-            //         return index.waitTask(lastTask.taskID);
-            //     });
-
-
-        });
+        // Init test data
+        const index = algolia.initIndex(`${prefix}_standard_keys`);
+        return index.saveObjects(algoliaFixtures)
+            .then(task => index.waitTask(task.taskID));
 
     });
 
