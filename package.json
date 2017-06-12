@@ -1,6 +1,6 @@
 {
   "name": "figolia",
-  "version": "1.0.0",
+  "version": "0.3.5",
   "description": "⚡️  Keep your Algolia search indexes in sync with your Firebase datasets!",
   "author": "Aurélien Chivot <aurelien@webstylestory.com>",
   "license": "MIT",
