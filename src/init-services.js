@@ -41,7 +41,6 @@ export default function initServices() {
     // Only initialize Firebase if it wasn't done before
     if (!FirebaseAdmin.apps.length) {
         FirebaseAdmin.database.enableLogging(Debug.enabled('firebase'), Debug('firebase'));
-        console.log('PRIVATE KEY', process.env.FIREBASE_PRIVATE_KEY.replace('%NEWLINE%', '\n'));
         // Service account is provided as a file, but for testing purposes on external services
         // (like travis) indivdual fields are provided in the environment. Private key can be found
         // in the service account file and provided as an environment variable, only new lines (\n)
@@ -54,7 +53,6 @@ export default function initServices() {
                 clientEmail: `server@${firebaseProjectId}.iam.gserviceaccount.com`,
                 privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/%NEWLINE%/g, '\n')
             };
-        console.log('SERVICE ACCOUNT', serviceAccount);
         FirebaseAdmin.initializeApp({
             credential: FirebaseAdmin.credential.cert(serviceAccount),
             databaseURL: `https://${global.CONFIG.firebase.instance}.firebaseio.com`,
