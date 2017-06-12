@@ -232,6 +232,7 @@ you need to specify the full path of the executable :
 
 ## Release notes
 
+ * 0.4.1 - Small fixes and compliance with third party tools like TravisCI
  * 0.4.0 - Update deps, firebase to firebase-admin, auth by secret to serviceAccount file
  * 0.3.5 - Optimize ngrams storage by grouping multiple fields and deduplicating 
  * 0.3.4 - throw is key does not exists. excludedFields can be nested prop
