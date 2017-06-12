@@ -2,8 +2,8 @@ import prettyjson from 'prettyjson';
 import Promise from 'bluebird';
 
 import Debug from './debug';
-import services from './init-services';
 import reindex from './reindex';
+import initServices from './init-services';
 import liveIndex from './live-index';
 import getLastTimestamp from './get-last-timestamp';
 
@@ -13,6 +13,7 @@ const debug = Debug('figolia:main');
 // Main server
 function main(CONFIG) {
 
+    const services = initServices();
     const envName = process.env.NODE_ENV === 'production' ? 'PRODUCTION' : 'DEVELOPMENT';
     info(`Starting server in ${envName} environment.`);
 

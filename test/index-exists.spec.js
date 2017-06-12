@@ -1,21 +1,14 @@
 import { expect } from 'chai';
 
-import { fb, algolia } from '../src/init-services';
+import initServices from '../src/init-services';
 import indexExists from '../src/index-exists.js';
 
 // Environment variables must be provided for the tests to work
 
-const config = {
-    firebase: {
-        instance: process.env.FIREBASE_INSTANCE,
-        accountServiceFile: process.env.FIREBASE_ACCOUNT,
-        path: process.env.FIREBASE_PATH || 'algolia',
-        uid: process.env.FIREBASE_UID || 'algolia'
-    },
-    algolia: {
-        applicationId: process.env.ALGOLIA_APP_ID,
-        apiKey: process.env.ALGOLIA_API_KEY
-    },
+const { fb, algolia } = initServices();
+
+const CONFIG = {
+    ...global.CONFIG,
     throttleDelay: 10,
     liveIndex: false,
     schema: {}
@@ -43,8 +36,6 @@ describe('Checking existence of an Algolia index', function() {
 
     // Take your time, baby (1min/test)
     this.timeout(60 * 1000);
-
-    let algolia;
 
     before('Setup Algolia test data', function() {
 

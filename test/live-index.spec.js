@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import { maxBy as _maxBy } from 'lodash';
 import prettyjson from 'prettyjson';
 
-import { fb, algolia } from '../src/init-services';
+import initServices from '../src/init-services';
 import reindex from '../src/reindex.js';
 import liveIndex from '../src/live-index.js';
 
@@ -19,17 +19,10 @@ const waitFor = seconds => {
 const now = Date.now();
 const prefix = `ALGOLIA_FIREBASE_INDEXER_TEST_${now}`;
 
+const { fb, algolia } = initServices();
+
 const CONFIG = {
-    firebase: {
-        instance: process.env.FIREBASE_INSTANCE,
-        accountServiceFile: process.env.FIREBASE_ACCOUNT,
-        path: process.env.FIREBASE_PATH || 'algolia',
-        uid: process.env.FIREBASE_UID || 'algolia'
-    },
-    algolia: {
-        applicationId: process.env.ALGOLIA_APP_ID,
-        apiKey: process.env.ALGOLIA_API_KEY
-    },
+    ...global.CONFIG,
     liveIndex: true,
     throttleDelay: 10,
     schema: {
@@ -45,6 +38,7 @@ const CONFIG = {
         }
     }
 };
+
 
 
 //
@@ -93,8 +87,6 @@ const firebaseFixtures = {
 describe('Live indexing of a Firebase dataset to Algolia', function() {
     // Take your time, baby (10min/test)
     this.timeout(10 * 60 * 1000);
-
-    let fb, algolia;
 
     before('Setup Algolia and Firebase test data', function() {
 

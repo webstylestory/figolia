@@ -28,7 +28,7 @@ var main = require(path.join(__dirname, 'src/main')).default;
 program
     .version(packageJson.version)
     .description(packageJson.description + '\n\n  ' +
-        'All options can be set in configuration file and loaded with -c option, ' +
+        'Options can be set in configuration file and loaded with -c option, ' +
         'or placed in ~/.figolia.conf.js.\n  An example configuration file, ' +
         'containing default values, can be found here: ' + __dirname +
         '/default.conf.js.\n\n  Full documentation: ' +
@@ -52,35 +52,34 @@ var conf = program.config;
 var configFile = conf || os.homedir() + '/.figolia.conf.js';
 
 // Load user configuration or load default config from module folder
-var CONFIG;
 try {
 
-    CONFIG = require(path.resolve(configFile).replace(/.js$/, ''));
+    global.CONFIG = require(path.resolve(configFile).replace(/.js$/, ''));
 } catch (err) {
     if (err instanceof SyntaxError) {
         throw err;
     }
-    CONFIG = require(path.join(__dirname, 'defaults.conf.js'));
+    global.CONFIG = require(path.join(__dirname, 'defaults.conf.js'));
 }
 
 // Override CONFIG values from commandline
 ['reset', 'liveIndex', 'timestampField', 'throttleDelay'].forEach(key => {
-    CONFIG[key] = program[key] || CONFIG[key];
+    global.CONFIG[key] = program[key] || global.CONFIG[key];
 });
 
 // Propagate timestampField to dataset config
-if (CONFIG['timestampField']) {
-    for (var key in CONFIG.schema) {
-        CONFIG.schema[key].timestampField =
-            CONFIG.schema[key].timestampField || CONFIG['timestampField'];
+if (global.CONFIG['timestampField']) {
+    for (var key in global.CONFIG.schema) {
+        global.CONFIG.schema[key].timestampField =
+            global.CONFIG.schema[key].timestampField || global.CONFIG['timestampField'];
     }
 }
 
 // Launch server
-main(CONFIG)
+main(global.CONFIG)
     .then(() => {
         // Exit program except if live indexing was started
-        if (!CONFIG.liveIndex) {
+        if (!global.CONFIG.liveIndex) {
             process.exit(0);
         }
     })
