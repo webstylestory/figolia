@@ -10,6 +10,8 @@ When using [Firebase](http://firebase.com) as a web or mobile backend, [Algolia]
 
 *(Codebase inspired by Scott Smith's work in this [blog post](http://scottksmith.com/blog/2014/12/09/algolia-real-time-search-with-firebase/))*
 
+**2017 note: as of this year, Google released Firebase Functions, that you can use as triggers to update Algolia indices from your Firebase database. The functions are still in Beta and might get a bit pricey to use if you have a lot of mutations in your indexed search data. I am still using `figolia` for the moment (in production) and keep maintaining the service.**
+
 
 ## Features
 
@@ -84,8 +86,10 @@ Copy the `defaults.conf.js` and modify it according to your needs, before runnin
     var CONFIG = {
         // Firebase credentials
         firebase: {
-            instance: 'TO_BE_CHANGED',
-            secret: 'TO_BE_CHANGED',
+            instance: 'my-firebase-project',
+            // The bellow file can be downloaded from the Firebase Console in the 
+            // last tabs of the parameters of your project. NEVER SHARE THAT FILE
+            serviceAccountFile: '/path/to/serviceAccountFile.json',
             // Where to store server metadata
             path: 'algolia',
             // Firebase token will be generated with this uid (to write above path)
@@ -155,6 +159,9 @@ Copy the `defaults.conf.js` and modify it according to your needs, before runnin
         }
     };
 
+#### Configuration update from v3.x to v4.x
+
+`firebase` package is now deprecated on the server, hence the update to use `firebase-admin`. You have to update your figolia configuration to remove the `firebase.secret` entry, and replace it with a `firebase.serviceAccountFile` pointing to your firebase key json file. It can be downloaded from the Firebase Console in the last tabs of the parameters of your project. NEVER SHARE THAT FILE.
 
 ### Firebase configuration
 
@@ -225,6 +232,7 @@ you need to specify the full path of the executable :
 
 ## Release notes
 
+ * 0.4.0 - Update deps, firebase to firebase-admin, auth by secret to serviceAccount file
  * 0.3.5 - Optimize ngrams storage by grouping multiple fields and deduplicating 
  * 0.3.4 - throw is key does not exists. excludedFields can be nested prop
  * 0.3.3 - Object key can be nested prop: `'prop.id`'
@@ -270,14 +278,14 @@ By default, basic info is output in the console. Should you need more debug info
 Because Firebase and Algolia accounts are needed for this app, you have to provide
 all the necessary credentials as environment variables while running `npm test`:
 
-    FIREBASE_INSTANCE=CHANGE_ME FIREBASE_SECRET=CHANGE_ME ALGOLIA_APP_ID=CHANGE_ME \
+    FIREBASE_INSTANCE=CHANGE_ME FIREBASE_ACCOUNT=CHANGE_ME ALGOLIA_APP_ID=CHANGE_ME \
     ALGOLIA_API_KEY=CHANGE_ME DEBUG=quiet npm test
 
 Note 1: The tests are pretty slow sometimes, because they wait for all Algolia write
 and indexing operations to finish in order to validate the results. You can speed 
 up your testing of a specific file by appending its name to the command line:
 
-    FIREBASE_INSTANCE=CHANGE_ME FIREBASE_SECRET=CHANGE_ME ALGOLIA_APP_ID=CHANGE_ME \
+    FIREBASE_INSTANCE=CHANGE_ME FIREBASE_ACCOUNT=CHANGE_ME ALGOLIA_APP_ID=CHANGE_ME \
     ALGOLIA_API_KEY=CHANGE_ME DEBUG=quiet npm test ./test/testfile.spec.js
 
 *Note 2: although the server can work with a read-only access to Firebase, the tests
