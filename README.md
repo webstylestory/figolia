@@ -10,7 +10,7 @@ When using [Firebase](http://firebase.com) as a web or mobile backend, [Algolia]
 
 *(Codebase inspired by Scott Smith's work in this [blog post](http://scottksmith.com/blog/2014/12/09/algolia-real-time-search-with-firebase/))*
 
-**2017 note: as of this year, Google released Firebase Functions, that you can use as triggers to update Algolia indices from your Firebase database. The functions are still in Beta and might get a bit pricey to use if you have a lot of mutations in your indexed search data. I am still using `figolia` for the moment (in production) and keep maintaining the service.**
+**2017 note: as of this year, Google released Firebase Functions, that you can use as triggers to update Algolia indices from your Firebase database. The functions are still in Beta and might get a bit pricey to use if you have a lot of mutations in your indexed search data. I am still using `figolia` for the moment (in production) and keep maintaining this package.**
 
 
 ## Features
@@ -291,7 +291,7 @@ up your testing of a specific file by appending its name to the command line:
 
 *Note 2: although the server can work with a read-only access to Firebase, the tests
 cannot, because they have to write fixture data, hence the need for a full Firebase
-configuration, including `secret` and `uid` ([see configuration](#firebase-configuration))*
+configuration, including `serviceAccountFile` and `uid` ([see configuration](#firebase-configuration))*
 
 
 ### Contribute
