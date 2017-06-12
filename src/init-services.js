@@ -41,7 +41,20 @@ export default function initServices() {
     // Only initialize Firebase if it wasn't done before
     if (!FirebaseAdmin.apps.length) {
         FirebaseAdmin.database.enableLogging(Debug.enabled('firebase'), Debug('firebase'));
-        const serviceAccount = require(path.join(__dirname, '..', global.CONFIG.firebase.serviceAccountFile));
+        console.log('PRIVATE KEY', process.env.FIREBASE_PRIVATE_KEY.replace('%NEWLINE%', '\n'));
+        // Service account is provided as a file, but for testing purposes on external services
+        // (like travis) indivdual fields are provided in the environment. Private key can be found
+        // in the service account file and provided as an environment variable, only new lines (\n)
+        // must be replaced by %NEWLINE% so the script below can provide the correct key.
+        // Also, firebaseProjectId is the same as the instance, except it does not accept leading numbers
+        const firebaseProjectId = process.env.FIREBASE_INSTANCE.replace(/^[0-9]+/, '');
+        const serviceAccount = global.CONFIG.firebase.serviceAccountFile !== 'TO_BE_CHANGED' ?
+            require(path.join(__dirname, '..', global.CONFIG.firebase.serviceAccountFile)) : {
+                projectId: firebaseProjectId,
+                clientEmail: `server@${firebaseProjectId}.iam.gserviceaccount.com`,
+                privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/%NEWLINE%/g, '\n')
+            };
+        console.log('SERVICE ACCOUNT', serviceAccount);
         FirebaseAdmin.initializeApp({
             credential: FirebaseAdmin.credential.cert(serviceAccount),
             databaseURL: `https://${global.CONFIG.firebase.instance}.firebaseio.com`,
