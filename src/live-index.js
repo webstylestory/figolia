@@ -20,7 +20,7 @@ const addToCache = (index, type, fbRef) => {
     if (!pendingTasks[index]) {
         pendingTasks[index] = { add: {}, update: {}, del: {} };
     }
-    pendingTasks[index][type][fbRef.key()] = fbRef.val();
+    pendingTasks[index][type][fbRef.key] = fbRef.val();
 };
 
 //
