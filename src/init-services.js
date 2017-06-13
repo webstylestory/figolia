@@ -51,7 +51,7 @@ export default function initServices() {
             info('ERROR: Will not connect to algolia (missing serviceAccount file)');
             return { fb: null, algolia: null };
         }
-        const serviceAccount = global.CONFIG.firebase.serviceAccountFile !== null ?
+        const serviceAccount = global.CONFIG.firebase.serviceAccountFile ?
             require(global.CONFIG.firebase.serviceAccountFile) : {
                 projectId: firebaseProjectId,
                 clientEmail: `server@${firebaseProjectId}.iam.gserviceaccount.com`,
