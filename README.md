@@ -142,10 +142,10 @@ Copy the `defaults.conf.js` and modify it according to your needs, before runnin
                 // Optional, list of fields to exclude from index
                 // Note: if both are specified, `excludeFields` 
                 // is applied *after* `includeFields`
-                // Nested fields can be accessed using dot notation
+                // Nested properties can be accessed using dot notation
                 excludeFields: [
                     'passwdHash',
-                    'nested.privateProp'
+                    'nested.property'
                 ],
                 // Optional, list of fields for which you need N-Gram tokens
                 // ex. "username: 'hermione'", will also create an additional
@@ -155,7 +155,7 @@ Copy the `defaults.conf.js` and modify it according to your needs, before runnin
                 // letting users search with keyword "mione"
                 // Note: this can be storage-consumming for long fields, use with 
                 //       caution ! (preferably on fields with enforced size)
-                // Nested fields can be accessed using dot notation
+                // Nested properties can be accessed using dot notation
                 ngrams: ['username', 'profile.fullName']
             },
             todoItems: {
@@ -248,7 +248,7 @@ you need to specify the full path of the executable :
 
 ## Release notes
 
- * 0.4.3 - Small fixes and compliance with third party tools like TravisCI
+ * 0.4.5 - Small fixes and compliance with third party tools like TravisCI
  * 0.4.0 - Update deps, firebase to firebase-admin, auth by secret to serviceAccount file
  * 0.3.5 - Optimize ngrams storage by grouping multiple fields and deduplicating 
  * 0.3.4 - throw is key does not exists. excludedFields can be nested prop
