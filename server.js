@@ -75,6 +75,9 @@ if (global.CONFIG['timestampField']) {
     }
 }
 
+// Add current version to config
+global.CONFIG.version = packageJson.version;
+
 // Launch server
 main(global.CONFIG)
     .then(() => {

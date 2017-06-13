@@ -15,7 +15,7 @@ function main(CONFIG) {
 
     const services = initServices();
     const envName = process.env.NODE_ENV === 'production' ? 'PRODUCTION' : 'DEVELOPMENT';
-    info(`Starting server in ${envName} environment.`);
+    info(`Starting Figolia v${CONFIG.version} in ${envName} environment.`);
 
     debug('Current config: ');
     debug(prettyjson.render(CONFIG));
