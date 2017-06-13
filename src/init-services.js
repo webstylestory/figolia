@@ -46,8 +46,8 @@ export default function initServices() {
         // must be replaced by %NEWLINE% so the script below can provide the correct key.
         // Also, firebaseProjectId is the same as the instance, except it does not accept leading numbers
         const firebaseProjectId = (process.env.FIREBASE_INSTANCE || '').replace(/^[0-9]+/, '');
-        if (!global.CONFIG.firebase.serviceAccountFile ||
-            !process.env.FIREBASE_INSTANCE || !process.env.FIREBASE_PRIVATE_KEY) {
+        if (!global.CONFIG.firebase.serviceAccountFile &&
+            (!process.env.FIREBASE_INSTANCE || !process.env.FIREBASE_PRIVATE_KEY)) {
             info('ERROR: Will not connect to algolia (missing serviceAccount file)');
             return { fb: null, algolia: null };
         }
