@@ -10,11 +10,16 @@
 //   * The schema/indexes you want to sync
 //
 
-
 var CONFIG = {
     // Firebase credentials
     firebase: {
+        // Firebase project name, as seen in your web config:
+        // `databaseUrl: 'https://<XXXXX>.firebaseio.com'`
         instance: process.env.FIREBASE_INSTANCE || '', // TO BE CHANGED
+        // The bellow file can be downloaded from the Firebase Console in the
+        // last tabs of the settings of your project. NEVER SHARE THAT FILE.
+        // Note: you can also import `path` and use `__dirname` to refer to this file directory
+        // eg. serviceAccountFile: path.join(__dirname, 'serviceAccountFile.json'),
         serviceAccountFile: process.env.FIREBASE_ACCOUNT || '', // TO BE CHANGED
         // Where to store server metadata
         path: process.env.FIREBASE_PATH || 'algolia',
@@ -23,6 +28,7 @@ var CONFIG = {
     },
     // Algolia credentials
     algolia: {
+        // Algolia Application ID
         applicationId: process.env.ALGOLIA_APP_ID || '', // TO BE CHANGED
         // *Admin* API Key
         apiKey: process.env.ALGOLIA_API_KEY || '' // TO BE CHANGED
@@ -76,7 +82,8 @@ var CONFIG = {
 //             // letting users search with keyword "mione"
 //             // Note: this can be storage-consumming for long fields, use with
 //             //       caution ! (preferably on fields with enforced size)
-//             ngrams: ['username']
+//             // Nested fields can be accessed with dot notation
+//             ngrams: ['username', 'profile.fullName']
 //         },
 //         todoItems: {
 //             // Second example dataset to index

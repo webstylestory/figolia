@@ -86,10 +86,13 @@ Copy the `defaults.conf.js` and modify it according to your needs, before runnin
     var CONFIG = {
         // Firebase credentials
         firebase: {
-            // Firebase project name
-            instance: 'XXXXX',
+            // Firebase project name, as seen in your web config:
+            // `databaseUrl: 'https://<XXXXX>.firebaseio.com'`
+            instance: '<XXXXX>',
             // The bellow file can be downloaded from the Firebase Console in the 
-            // last tabs of the parameters of your project. NEVER SHARE THAT FILE
+            // last tabs of the settings of your project. NEVER SHARE THAT FILE.
+            // Note: you can also import `path` and use `__dirname` to refer to this file directory
+            // eg. serviceAccountFile: path.join(__dirname, 'serviceAccountFile.json'),
             serviceAccountFile: '/path/to/serviceAccountFile.json',
             // Where to store server metadata
             path: 'algolia',
@@ -99,9 +102,9 @@ Copy the `defaults.conf.js` and modify it according to your needs, before runnin
         // Algolia credentials
         algolia: {
             // Algolia application ID
-            applicationId: 'XXXXX',
+            applicationId: '<XXXXX>',
             // *Admin* API Key
-            apiKey: 'XXXXX'
+            apiKey: '<XXXXX>'
         },
         // Fully reindex all datasets (ERASE PREVIOUS INDEX DATA)
         reset: false,
@@ -139,6 +142,7 @@ Copy the `defaults.conf.js` and modify it according to your needs, before runnin
                 // Optional, list of fields to exclude from index
                 // Note: if both are specified, `excludeFields` 
                 // is applied *after* `includeFields`
+                // Nested fields can be accessed using dot notation
                 excludeFields: [
                     'passwdHash',
                     'nested.privateProp'
@@ -151,7 +155,8 @@ Copy the `defaults.conf.js` and modify it according to your needs, before runnin
                 // letting users search with keyword "mione"
                 // Note: this can be storage-consumming for long fields, use with 
                 //       caution ! (preferably on fields with enforced size)
-                ngrams: ['username', 'profile.fullname']
+                // Nested fields can be accessed using dot notation
+                ngrams: ['username', 'profile.fullName']
             },
             todoItems: {
                 // Second example dataset to index, minimal config
@@ -161,9 +166,18 @@ Copy the `defaults.conf.js` and modify it according to your needs, before runnin
         }
     };
 
-#### Configuration update from v0.3.x to v0.4.x
+#### Update from v0.3.x to v0.4.x
 
-`firebase` package is now deprecated on the server, hence the update to use `firebase-admin`. You have to update your figolia configuration to remove the `firebase.secret` entry, and replace it with a `firebase.serviceAccountFile` pointing to your firebase key json file. It can be downloaded from the Firebase Console in the last tabs of the parameters of your project. NEVER SHARE THAT FILE.
+`firebase` package is now deprecated on the server, hence the update to use `firebase-admin`. You have to update your figolia configuration to remove the `firebase.secret` entry, and replace it with a `firebase.serviceAccountFile` pointing to your firebase key json file. It can be downloaded from the Firebase Console in the last tabs of the settings of your project. NEVER SHARE THAT FILE.
+
+Basic steps (for a globval install):
+
+  1. `npm i -g figolia@^0.4.x`
+  2. Download the service account json file from your Firebase console
+  3. In your figolia configuration file, replace `secret` by `serviceAccountFile` which value is the path to the file you just downloaded
+  4. If you store the service account file in a project with versioned source code, do not commit it (for example by adding a line in you `.gitignore` file)
+  5. Restart your `figolia` services, and you're done!
+  6. Report any issues ;-)
 
 ### Firebase configuration
 
