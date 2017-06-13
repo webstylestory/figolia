@@ -46,12 +46,12 @@ export default function initServices() {
         // in the service account file and provided as an environment variable, only new lines (\n)
         // must be replaced by %NEWLINE% so the script below can provide the correct key.
         // Also, firebaseProjectId is the same as the instance, except it does not accept leading numbers
-        const firebaseProjectId = process.env.FIREBASE_INSTANCE.replace(/^[0-9]+/, '');
+        const firebaseProjectId = (process.env.FIREBASE_INSTANCE || '').replace(/^[0-9]+/, '');
         const serviceAccount = global.CONFIG.firebase.serviceAccountFile !== 'TO_BE_CHANGED' ?
             require(path.join(__dirname, '..', global.CONFIG.firebase.serviceAccountFile)) : {
                 projectId: firebaseProjectId,
                 clientEmail: `server@${firebaseProjectId}.iam.gserviceaccount.com`,
-                privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/%NEWLINE%/g, '\n')
+                privateKey: (process.env.FIREBASE_PRIVATE_KEY || '').replace(/%NEWLINE%/g, '\n')
             };
         FirebaseAdmin.initializeApp({
             credential: FirebaseAdmin.credential.cert(serviceAccount),
