@@ -170,7 +170,7 @@ Copy the `defaults.conf.js` and modify it according to your needs, before runnin
 
 `firebase` package is now deprecated on the server, hence the update to use `firebase-admin`. You have to update your figolia configuration to remove the `firebase.secret` entry, and replace it with a `firebase.serviceAccountFile` pointing to your firebase key json file. It can be downloaded from the Firebase Console in the last tabs of the settings of your project. NEVER SHARE THAT FILE.
 
-Basic steps (for a globval install):
+Basic steps (for a global install):
 
   1. `npm i -g figolia@^0.4.x`
   2. Download the service account json file from your Firebase console
