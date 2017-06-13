@@ -14,8 +14,8 @@
 var CONFIG = {
     // Firebase credentials
     firebase: {
-        instance: process.env.FIREBASE_INSTANCE || 'TO_BE_CHANGED',
-        serviceAccountFile: process.env.FIREBASE_ACCOUNT || 'TO_BE_CHANGED',
+        instance: process.env.FIREBASE_INSTANCE || '', // TO BE CHANGED
+        serviceAccountFile: process.env.FIREBASE_ACCOUNT || '', // TO BE CHANGED
         // Where to store server metadata
         path: process.env.FIREBASE_PATH || 'algolia',
         // Firebase token will be generated with this uid (to write above path)
@@ -23,9 +23,9 @@ var CONFIG = {
     },
     // Algolia credentials
     algolia: {
-        applicationId: process.env.ALGOLIA_APP_ID || 'TO_BE_CHANGED',
+        applicationId: process.env.ALGOLIA_APP_ID || '', // TO BE CHANGED
         // *Admin* API Key
-        apiKey: process.env.ALGOLIA_API_KEY || 'TO_BE_CHANGED'
+        apiKey: process.env.ALGOLIA_API_KEY || '' // TO BE CHANGED
     },
     // Fully reindex all datasets. Can be overiden on the commandline.
     reset: false,

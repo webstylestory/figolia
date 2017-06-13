@@ -86,7 +86,8 @@ Copy the `defaults.conf.js` and modify it according to your needs, before runnin
     var CONFIG = {
         // Firebase credentials
         firebase: {
-            instance: 'my-firebase-project',
+            // Firebase project name
+            instance: 'XXXXX',
             // The bellow file can be downloaded from the Firebase Console in the 
             // last tabs of the parameters of your project. NEVER SHARE THAT FILE
             serviceAccountFile: '/path/to/serviceAccountFile.json',
@@ -97,9 +98,10 @@ Copy the `defaults.conf.js` and modify it according to your needs, before runnin
         },
         // Algolia credentials
         algolia: {
-            applicationId: 'TO_BE_CHANGED',
+            // Algolia application ID
+            applicationId: 'XXXXX',
             // *Admin* API Key
-            apiKey: 'TO_BE_CHANGED'
+            apiKey: 'XXXXX'
         },
         // Fully reindex all datasets (ERASE PREVIOUS INDEX DATA)
         reset: false,
@@ -232,7 +234,7 @@ you need to specify the full path of the executable :
 
 ## Release notes
 
- * 0.4.1 - Small fixes and compliance with third party tools like TravisCI
+ * 0.4.3 - Small fixes and compliance with third party tools like TravisCI
  * 0.4.0 - Update deps, firebase to firebase-admin, auth by secret to serviceAccount file
  * 0.3.5 - Optimize ngrams storage by grouping multiple fields and deduplicating 
  * 0.3.4 - throw is key does not exists. excludedFields can be nested prop

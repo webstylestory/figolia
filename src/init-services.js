@@ -11,8 +11,8 @@ export default function initServices() {
     global.CONFIG = {
         // Firebase credentials
         firebase: {
-            instance: process.env.FIREBASE_INSTANCE || 'TO_BE_CHANGED',
-            serviceAccountFile: process.env.FIREBASE_ACCOUNT || 'TO_BE_CHANGED',
+            instance: process.env.FIREBASE_INSTANCE || '',
+            serviceAccountFile: process.env.FIREBASE_ACCOUNT || '',
             // Where to store server metadata
             path: process.env.FIREBASE_PATH || 'algolia',
             // Firebase token will be generated with this uid (to write above path)
@@ -20,23 +20,22 @@ export default function initServices() {
         },
         // Algolia credentials
         algolia: {
-            applicationId: process.env.ALGOLIA_APP_ID || 'TO_BE_CHANGED',
+            applicationId: process.env.ALGOLIA_APP_ID || '',
             // *Admin* API Key
-            apiKey: process.env.ALGOLIA_API_KEY || 'TO_BE_CHANGED'
+            apiKey: process.env.ALGOLIA_API_KEY || ''
         },
         ...global.CONFIG
     };
 
     // Connect to algolia
     const { applicationId, apiKey } = global.CONFIG.algolia;
+    if (!applicationId || !apiKey) {
+        info('ERROR: Will not connect to algolia (missing app ID or key)');
+        return { fb: null, algolia: null };
+    }
     const algolia = algoliasearch(applicationId, apiKey);
 
     info(`Connected to Algolia appId ${applicationId}`);
-
-    // Connect to Firebase
-    if (!global.CONFIG.firebase.serviceAccountFile || !global.CONFIG.firebase.uid) {
-        throw new Error('Not able to authenticate, missing serviceAccountFile or uid config values');
-    }
 
     // Only initialize Firebase if it wasn't done before
     if (!FirebaseAdmin.apps.length) {
@@ -47,7 +46,13 @@ export default function initServices() {
         // must be replaced by %NEWLINE% so the script below can provide the correct key.
         // Also, firebaseProjectId is the same as the instance, except it does not accept leading numbers
         const firebaseProjectId = (process.env.FIREBASE_INSTANCE || '').replace(/^[0-9]+/, '');
-        const serviceAccount = global.CONFIG.firebase.serviceAccountFile !== 'TO_BE_CHANGED' ?
+        if (!global.CONFIG.firebase.serviceAccountFile ||
+            !process.env.FIREBASE_INSTANCE || !process.env.FIREBASE_PRIVATE_KEY) {
+            info('ERROR: Will not connect to algolia (missing serviceAccount file)');
+            return { fb: null, algolia: null };
+        }
+
+        const serviceAccount = global.CONFIG.firebase.serviceAccountFile !== null ?
             require(path.join(__dirname, '..', global.CONFIG.firebase.serviceAccountFile)) : {
                 projectId: firebaseProjectId,
                 clientEmail: `server@${firebaseProjectId}.iam.gserviceaccount.com`,
